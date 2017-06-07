@@ -1,0 +1,85 @@
+{% extends 'base.jinja' %}
+{% load template_tags %}
+{% block advertise %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="padding:0;">
+                {% sub_top_advertisements as top_advertisements %}
+                {% for advertisement in top_advertisements %}
+                    <a href="{{ advertisement.link }}">
+                        <img class="d-block img-fluid" src="{{ advertisement.banner.url }}">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock advertise %}
+{% block content %}
+    <style>
+        #team-ranking-table tr:first-child th {
+            text-align:center; font-size:12px;
+            padding-left:0; padding-right:0; border:none;
+        }
+        #team-ranking-table tr td {
+            text-align:center; font-size:13px;
+            vertical-align:middle; padding-top: 5px; padding-bottom:5px;
+        }
+        #team-ranking-table #ranking-arsenal {
+            background-color: #f9f9f9;
+        }
+        #team-ranking-table #ranking-arsenal td {
+            font-weight:bold;
+        }
+        @media (min-width: 992px) {
+            .ranking-team {
+                width: 35px;
+            }
+        }
+        @media (max-width: 992px) {
+            .ranking-team {
+                width: 25px;
+            }
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8" style="margin-top:40px;">
+                {% block league_team_ranking %}
+                {% endblock league_team_ranking %}
+            </div>
+            <div class="col-md-4">
+                <div class="row justify-content-end" style="margin-top:40px;">
+                    <div style="width:95%;">
+                    <div style="text-align:center; font-size:20px; font-weight:bold; margin-bottom:10px;">
+                        팀 순위
+                    </div>
+                    <table class="table card" id="team-ranking-table">
+                        <tr>
+                            <th style="width:14%;">순위</th>
+                            <th style="width:16%;">팀</th>
+                            <th style="width:14%;">승</th>
+                            <th style="width:14%;">무</th>
+                            <th style="width:14%;">패</th>
+                            <th class="hidden-md-down" style="width:14%;">승점</th>
+                            <th class="hidden-md-down" style="width:14%;">골득</th>
+                        </tr>
+                        {% for team in team_lists %}
+                            <tr id="{% if team.team.name == 'Arsenal' %}ranking-arsenal{% endif %}">
+                                <td>{{ team.ranking }}</td>
+                                <td><img class="ranking-team" src="{{ team.team.photo.url }}"></td>
+                                <td>{{ team.win }}</td>
+                                <td>{{ team.draw }}</td>
+                                <td>{{ team.lose }}</td>
+                                <td class="hidden-md-down">{{ team.benefit }}</td>
+                                <td class="hidden-md-down">{{ team.goal_benefit }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block domready %}
+{% endblock domready %}

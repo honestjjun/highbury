@@ -1,0 +1,229 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 rounded" style="margin:20px 0 10px 0; padding:10px; font-size:13px; text-align:center; border:1px solid #ddd;">
+                                <div style="font-weight:bold; font-size:14px;">
+                                    신고 게시판 주의 사항
+                                </div>
+                                <div>
+                                    1. 함부로 권력을 남용하셔서는 안됩니다.
+                                </div>
+                                <div>
+                                    2. 한번에 <a style="color:#ba1626; font-weight:bold;">red card</a> 를 줄 수 없으며, 악질일 경우에는 작성자 란을 통해 <a style="font-weight:bold; color:#9d9d00">yellow card</a>를 추가로 주시면 됩니다.
+                                </div>
+                                <div>
+                                    3. 처리란의 <a style="font-weight:bold;">옐로우</a>는 작성자에게 <a style="color:#9D9D00">yellow card</a> 와 함께 게시글은 자동 삭제가 됩니다.
+                                </div>
+                                <div>
+                                    4. 처리란의 <a style="font-weight:bold;">삭제</a>는 작성자에게 별다른 문제는 없으며 게시글만 삭제가 됩니다.
+                                </div>
+                                <div>
+                                    5. 처리란의 <a style="font-weight:bold;">유지</a>는 게시글에 이상이 없을 경우 선택하면 됩니다.
+                                </div>
+                                <div>
+                                    6. 만일 하나의 게시물에 다수의 신고가 들어왔을 경우에는 한가지만 처리하면 나머지는 자동 처리 완료가 됩니다.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="margin:0 0 5px 30px; font-size:15px; font-weight:bold;">
+                                신고 게시판
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-bordered">
+                                    <tr style="font-size:10px;">
+                                        <th style="text-align:center; width:20px; padding-left:0; padding-right:0;">번호</th>
+                                        <th style="text-align:center; width:45px; padding-left:0; padding-right:0;">분류</th>
+                                        <th style="text-align:center; padding-left:0; padding-right:0;">내 용</th>
+                                        <th style="width:100px; text-align:center; padding-left:0; padding-right:0;">작성자</th>
+                                        <th style="width:70px; text-align:center; padding-left:0; padding-right:0;">작성 날짜</th>
+                                        <th style="width:100px; text-align:center; padding-left:0; padding-right:0;">신고 이유</th>
+                                        <th style="width:100px; text-align:center; padding-left:0; padding-right:0;">신고자</th>
+                                        <th style="width:70px; text-align:center; padding-left:0; padding-right:0;">신고 날짜</th>
+                                        <th style="width:60px; text-align:center; padding-left:0; padding-right:0;">처리 현황</th>
+                                        <th style="width:129px; text-align:center; padding-left:0; padding-right:0;">처리</th>
+                                        <th style="width:70px; text-align:center; padding-left:0; padding-right:0;">처리 날짜</th>
+                                        <th style="width:100px; text-align:center; padding-left:0; padding-right:0;">집행 유저</th>
+                                    </tr>
+                                    {% for charge in charges %}
+                                        <tr style="font-size:11px;">
+                                            <td>{{ charge.id }}</td>
+                                            <td style="text-align:center; padding-left:0; padding-right:0;">{{ charge.set_sort }}</td>
+                                            {% with content=charge.content_object %}
+                                                {% if charge.sort == 'free' %}
+                                                    <td style="padding-left:5px; padding-right:5px;">
+                                                        <a href="{% url 'board_free:detail' id=content.id slug=content.slug %}" target="_blank">{{ content.title|truncatechars:50 }}</a>
+                                                    </td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;"><div style="float:left; padding-left:5px;">{{ content.user }}</div>{% include 'admin/sub_main/modal/charge_card.jinja' with user=content.user %}</td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;">{{ content.created|date:'y-m-d [H:i]' }}</td>
+                                                {% elif charge.sort == 'comment' %}
+                                                    {% with comment_sort=charge.content_object.sort %}
+                                                        <td style="padding-left:5px; padding-right:5px;">
+                                                            <a href="{% if comment_sort == 'point-co' %}
+                                                                        {% url 'pointshop:detail' id=content.content_object.id slug=content.content_object.slug %}#results
+                                                                     {% elif comment_sort == 'point-re' %}
+                                                                        {% url 'pointshop:detail' id=content.content_object.id slug=content.content_object.slug %}#reviews
+                                                                     {% else %}
+                                                                        {% url 'board_free:detail' id=content.content_object.id slug=content.content_object.slug %}#results
+                                                                     {% endif %}" target="_blank">{{ content.content|truncatechars:50 }}</a>
+                                                        </td>
+                                                        <td style="padding-left:0; padding-right:0; text-align:center;"><div style="float:left; padding-left:5px;">{{ content.user }}</div>{% include 'admin/sub_main/modal/charge_card.jinja' with user=content.user %}</td>
+                                                        <td style="padding-left:0; padding-right:0; text-align:center;">{{ content.created|date:'y-m-d [H:i]' }}</td>
+                                                    {% endwith %}
+                                                {% elif charge.sort == 'message' %}
+                                                    <td style="padding-left:5px; padding-right:5px;">
+                                                        <a data-toggle="modal" data-target="#modal-message-content{{ forloop.counter }}" style="cursor:pointer;">{{ content.message|truncatechars:50 }}</a>
+                                                        {% include 'admin/sub_main/modal/message_content.jinja' with content=content %}
+                                                    </td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;"><div style="float:left; padding-left:5px;">{{ content.send_user }}</div>{% include 'admin/sub_main/modal/charge_card.jinja' with user=content.send_user %}</td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;">{{ content.created|date:'y-m-d [H:i]' }}</td>
+                                                {% else %}
+                                                    <td style="padding-left:5px; padding-right:5px;">
+                                                        <a href="{% url 'account:profile' user=content %}" target="_blank">{{ content.nickname }}</a>
+                                                    </td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;"><div style="float:left; padding-left:5px;">{{ content.nickname }}</div>{% include 'admin/sub_main/modal/charge_card.jinja' with user=content %}</td>
+                                                    <td style="padding-left:0; padding-right:0; text-align:center;">{{ content.created|date:'y-m-d [H:i]' }}</td>
+                                                {% endif %}
+                                            {% endwith %}
+                                            <td style="padding-left:0; padding-right:0; text-align:center;">{{ charge.set_charge_reason }}</td>
+                                            <td style="padding:5px 0 0 0; text-align:center;">
+                                                {{ charge.charge_from }}{% if charge.is_charge %} 외 <a style="color:#ba1626;">{{ charge.charge_set.all|length }}</a>명<br>{% endif %}
+                                                <a class="btn btn-secondary" data-toggle="modal" data-target="#modal-charge-from{{ forloop.counter }}" style="cursor:pointer; margin-top:3px; font-size:10px; padding:4px 4px 4px 4px;">상세 내용 보기</a>
+                                                {% include 'admin/sub_main/modal/charge_from.jinja' with charge=charge %}
+                                            </td>
+                                            <td style="padding-left:0; padding-right:0; text-align:center;">{{ charge.charge_date|date:'y-m-d [H:i]' }}</td>
+                                            <td style="color:#ba1626; text-align:center;">
+                                                {{ charge.set_result_now }}
+                                            </td>
+                                            <td class="parent-result-select" style="padding-left:0; color:#ba1626; font-weight:bold; padding-right:0; text-align:center;">
+                                                {% if charge.result_now == 'no' %}
+                                                    <select class="form-control" id="result-select" name="result" style="float:left; width:60px; height:27px; padding:0; margin-left:7px; font-size:11px; color:grey;">
+                                                        <option value="none">---</option>
+                                                        {% if charge.sort == 'etc' %}
+                                                            <option value="yellow">경고</option>
+                                                        {% else %}
+                                                            <option value="yellow">경고(삭제)</option>
+                                                            <option value="delete">삭제</option>
+                                                        {% endif %}
+                                                        <option value="maintain">유지</option>
+                                                    </select>
+                                                    <button class="btn btn-charge-select-confirm" data-id="{{ charge.id }}" style="cursor:pointer; float:left; background-color:white; border:1px solid #c1c1c1; margin-left:2px; padding:0; width:50px; height:26px; font-size:11px;">확인</button>
+                                                {% else %}
+                                                    {{ charge.set_result }}
+                                                {% endif %}
+                                            </td>
+                                            <td style="padding-left:0; padding-right:0; text-align:center;">
+                                                {% if charge.result_date %}
+                                                    {{ charge.result_date|date:'y-m-d [H:i]' }}
+                                                {% else %}
+                                                    ---
+                                                {% endif %}
+                                            </td>
+                                            <td style="font-weight:bold; padding-left:0; padding-right:0; text-align:center;">
+                                                {% if charge.result_who %}
+                                                    {{ charge.result_who }}
+                                                {% else %}
+                                                    ---
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="12" style="font-size:14px; font-weight:bold; text-align:center;">
+                                                신고 내용이 없습니다.
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'modal/charge_select.jinja' %}
+    {% include 'modal/charge_result.jinja' %}
+
+{% endblock content %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var btn_charge_select = $('#btn-charge-select');
+
+            $('.btn-charge-select-confirm').on('click', function(e){
+                e.preventDefault();
+                var parent_charge = $(this).closest('.parent-result-select');
+                var parent_value = parent_charge.find('#result-select').val();
+
+                if (parent_value != 'none') {
+                    btn_charge_select.attr({'data-id': $(this).attr('data-id'), 'data-result': parent_value});
+                    $('#modal-charge-select').modal({
+                        show: true,
+                        backdrop: 'static',
+                        keyboard: false
+                    })
+                }
+            });
+            btn_charge_select.on('click', function(e){
+                e.preventDefault();
+                var content = $('#content-charge-result');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_result_ajax' %}',
+                    data:{
+                        'id': $(this).attr('data-id'),
+                        'result': $(this).attr('data-result')
+                    },
+                    success:function(data){
+                        if(data['status'] != 'none'){
+                            console.log(data['status']);
+                            if (data['status'] == 'success'){
+                                content.html('신고 처리가 완료되었습니다. 감사합니다.')
+                            } else if (data['status'] == 'already_result'){
+                                content.html('다른 관리자에 의해서 신고가 처리가 된 상태입니다.')
+                            }
+                            $('#modal-charge-result').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+            {# 신고 완료 버튼을 누르면 페이지 리로딩 시키기 #}
+            $('#btn-charge-result').on('click', function(e){
+                e.preventDefault();
+                window.location.href="http://127.0.0.1:8000/administrator/charge/";
+            });
+        });
+        $('.report-content-btn').on('click', function(e){
+            e.preventDefault();
+            $('#report-content-body').text($(this).attr('data-value'));
+            $('#report-content-modal').modal({
+                show:true,
+                backdrop: 'static',
+                keyboard: false
+            });
+        });
+        $('.reporter-btn').on('click', function(e){
+            e.preventDefault();
+            var $parent_reporter = $(this).closest('.reporter-writer-table');
+            $parent_reporter.find('#reporter-modal').modal({
+                show:true,
+                backdrop: 'static',
+                keyboard:false
+            })
+        });
+    </script>
+{% endblock domready %}
+

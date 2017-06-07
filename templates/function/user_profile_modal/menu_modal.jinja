@@ -1,0 +1,25 @@
+{# User Profile modal #}
+<div class="dropdown-menu dropdown-profile" id="user-modal" aria-labelledby="dropdownMenuLink">
+    <div class="dropdown-header" style="font-size:13px; margin:0; padding:0 0 30px 20px; border-bottom:1px solid #ddd;">
+        <div style="float:left; font-weight:bold;">{{ user.nickname }}</div>
+        {% if user.is_yellow %}
+            {% if user.is_red %}
+                <div style="float:left; width:12px; height:16px; margin: 3px 0 0 5px; background-color:red; border:1px solid #e20000;"></div>
+            {% else %}
+                <div style="float:left; width:12px; height:16px; margin: 3px 0 0 5px; background-color:yellow; border:1px solid #d8d800;"></div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <a class="dropdown-item dropdown-hi" href="{% url 'account:profile' user=user %}" target="_blank" style="font-size:13px; padding:10px 0 10px 20px;">프로필 보기</a>
+    <form action="{% url 'board_free:list' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="search_value" value="{{ user }}">
+        <input type="hidden" name="searchSelect" value="2">
+        <input type="submit" class="dropdown-item dropdown-hi" href="" style="cursor:pointer; font-size:13px; padding:10px 0 10px 20px;" value="유저 쓴글 보기">
+    </form>
+    {% if request.user.is_authenticated %}
+        <a class="dropdown-item dropdown-hi profile-message-btn" data-value="{{ user }}" href="" style="font-size:13px; padding:10px 0 10px 20px;">쪽지 보내기</a>
+        <a class="dropdown-item dropdown-hi profile-charge-btn" data-id="{{ user.id }}" data-value="{{ user.nickname }}" href="" style="font-size:13px; padding:10px 0 10px 20px;">신고하기</a>
+    {% endif %}
+    <a class="dropdown-item dropdown-hi" href="{% url 'account:profile_achievements' user=user sort=1 %}"  target="_blank" style="font-size:13px; padding:10px 0 10px 20px;">업적 보기</a>
+</div>

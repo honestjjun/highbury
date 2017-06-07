@@ -1,0 +1,194 @@
+{% extends 'board/side_menu/board_side_menu.jinja' %}
+{% block left_side %}
+    <style>
+        .review-list-menu .btn {
+            font-size:11px;
+        }
+        .review-list-menu .active {
+            background-color: #ba1626;
+            color:white;
+            border:1px solid #ba1626;
+        }
+    </style>
+    <!-- 상단 메뉴 -->
+    <div class="row review-list-title" style="margin-top:20px; margin-bottom:5px;">
+        <div class="col-lg-4 col-md-12" style="font-size:30px; font-weight:bold; padding:0 0 0 40px;">
+            리뷰 게시판
+        </div>
+        <div class="col-lg-8 review-list-menu hidden-md-down">
+            {% for category in categories reversed %}
+                <a class="btn btn-secondary {% if request.resolver_match.url_name == 'review_list' and request.GET.category == category.0|slugify %}active{% endif %}" href="{% url 'board_free:review_list' value="review" %}?category={{ category.0 }}">{{ category.1 }}</a>
+            {% endfor %}
+            <a class="btn btn-secondary" href="{% url "board_free:review_list" value="review" %}">전 체</a>
+        </div>
+        <div class="col-md-12 review-list-menu hidden-lg-up">
+            <a class="btn btn-secondary" href="{% url "board_free:review_list" value="review" %}">전 체</a>
+            {% for category in categories %}
+                <a class="btn btn-secondary {% if request.resolver_match.url_name == 'review_list' and request.GET.category == category.0|slugify %}active{% endif %}" href="{% url 'board_free:review_list' value="review" %}?category={{ category.0 }}">{{ category.1 }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 리뷰 게시물 나열 -->
+    <div class="row review-list-content">
+        {% for review in paging.0 %}
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 review-content" style="height:240px; margin-bottom:10px;">
+                <!-- 경기 후 리뷰 -->
+                {% if review.after_game_review %}
+                    {% include 'board/include/review_list/after.jinja' with game=review.after_game_review review=review %}
+                <!-- 경기 프리뷰 -->
+                {% elif review.before_game_review %}
+                    {% include 'board/include/review_list/before.jinja' with game=review.before_game_review review=review %}
+                <!-- 선수 리뷰 -->
+                {% elif review.player_review %}
+                    {% include 'board/include/review_list/player.jinja' with review=review %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row review-list-write-btn">
+        <div class="col-md-12" style="padding:0;">
+            <div style="float:left;">
+                <a class="btn" href="{% url 'board_free:choice_write' %}" style="background-color: #2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:100px;">글 작성</a>
+            </div>
+            <div style="float:right; margin-right:10px;">
+                <form action="" method="post" class="form-inline">
+                    {% csrf_token %}
+                    <label for="searchSelect"></label>
+                    <select class="form-control" name="searchSelect" id="searchSelect" style="width:115px; font-size:12px; height:34px; margin-right:5px;">
+                        <option value="0" {% if select_value == '0' %}selected="selected"{% endif %}>제목+내용</option>
+                        <option value="1" {% if select_value == '1' %}selected="selected"{% endif %}>제목만</option>
+                        <option value="2" {% if select_value == '2' %}selected="selected"{% endif %}>작성자</option>
+                    </select>
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="search_value" style="font-size:13px; width:200px; color:#7D7D7D;" placeholder="검색어를 입력해주세요" value="{% if search_value %}{{ search_value }}{% endif %}">
+                        <span class="input-group-btn">
+                            <input class="btn btn-secondary" type="submit" value="Search" style="font-weight:bold; color:#5e5e5e; font-size:13px;">
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 20px 0 50px 0;">
+        {% include 'function/pagination.jinja' with comments=paging.0 prev=paging.1 nxt=paging.2 prevPage=paging.3 nxtPage=paging.4 blockRange=paging.5 %}
+    </div>
+    {% include 'function/message_modal/charge_modal.jinja' %}
+    {% include 'function/message_modal/alert_message.jinja' %}
+{% endblock left_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var content = $('#write-message-content');
+            var message_take_user = $('#message-take-user');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                message_take_user.attr('value', $(this).attr('data-value'));
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            {# 메세지 보내기 #}
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'message:message_ajax' %}',
+                    data: {
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                $('#all-charge-reason').attr('style', 'display:none;');
+                $('#etc-charge-reason').attr('style', 'display:show; margin-bottom:10px;');
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                if (charge_sort.attr('value') == 'etc'){
+                    var charge_reason = $('#user-charge-reason');
+                } else {
+                    var charge_reason = $('#all-charge-reason');
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+        })
+    </script>
+{% endblock domready %}

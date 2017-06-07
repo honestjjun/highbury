@@ -1,0 +1,32 @@
+{% load custom_tags %}
+{% load template_tags %}
+<div class="row">
+    {% for product in products %}
+        <div class="col-md-4 col-sm-6 pointshop-product-image">
+            <div class="card" style="margin-bottom:18px;">
+                <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" style="height:100%; width:100%"></a>
+                <div class="card-block" style="margin:0; padding:0;">
+                    <div class="card-title" style="font-size:15px; font-weight:bold; margin:10px 0 15px 10px;">
+                        <a href="{{ product.get_absolute_url }}">{{ product.title }} ({{ product.category }})</a>
+                    </div>
+                    <div class="card-text" style="float:left; font-size:12px; color:grey; margin:0 0 12px 10px">추천
+                        <a style="color:#ba1626;">{{ product.recommends.all|length }}</a>
+                    </div>
+                    {% discount_confirm as discount %}
+                    {% if not discount %}
+                        <div class="card-text" style="float:right; font-size:15px; font-weight:bold; color:#ba1626; margin:0 10px 12px 0;">{{ product.point }}
+                            <a style="font-size:14px; color:#a8a8a8; text-decoration:none;">포인트</a>
+                        </div>
+                    {% else %}
+                        <div class="card-text" style="float:right; font-size:15px; color:#ba1626; margin:0 10px 12px 0;">
+                            <a style="text-decoration:line-through;">{{ product.point }}</a>
+                            <a style="font-size:14px; color:#a8a8a8; text-decoration:none;">포인트</a>
+                        </div>
+                        <div class="card-text" style="float:right; font-size:15px; font-weight:bold; color:#ba1626; margin-right:5px;">{{ product.point|discount_ratio:discount }}</div>
+                        <span class="badge" style="float:right; font-size:10px; font-weight:normal; background-color:#ba1626; margin:4px 5px 0 0;">{{ discount }}%할인</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,57 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% load custom_tags %}
+{% block right_side %}
+    <div class="row" style="padding-top:28px; margin:0; border-bottom:1px solid #ddd;">
+        <div class="col-md-6" style="padding:0 0 5px 15px; font-size:25px;">
+            업 적
+        </div>
+        <div class="col-md-6" style="text-align:right; padding:18px 25px 0 0; font-size:12px; color:grey;">
+            현재 유저는 <a style="color:#ba1626; font-weight:bold;">{{ now_category }}</a>에서 <a style="color:#ba1626; font-weight:bold;">{{ product_ratio.2 }}</a>% ({{ product_ratio.1 }} / {{ product_ratio.0 }}) 의 수집율을 달성하셨습니다.        </div>
+    </div>
+    <div style="margin:0; border-bottom:1px solid #ddd;">
+        <div class="row">
+            <div class="col-md-12"  style="margin:20px 0 7px 0; text-align:center; font-size:14px; font-weight:bold; color:#2d2d2d;">
+                카테고리
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="text-align:center; font-size:13px; margin-bottom:20px;">
+                {% for category in categories %}
+                    <a href="{% url 'account:achievement' sort=category.id %}" style="{% if sort == category.id %}color:#ba1626; font-weight:bold;{% endif %} padding:0 10px 0 0;">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div style="margin: 20px 0 100px 30px;">
+        {% for category in now_category.sub_category.all %}
+            <div class="row" style="margin-bottom:25px;">
+                <div style="width:120px; line-height:60px; vertical-align:middle; font-size:14px; font-weight:bold; color:#2d2d2d;">
+                    {{ category.name }}
+                </div>
+                <div style="padding:0;">
+                    {% for product in category.product.all %}
+                        {% if request.user in product.buyer.all %}
+                            <div style="float:left; padding-right:7px;">
+                                <div>
+                                    <img src="{{ product.image.url }}" style="border-radius:5px; width:60px;">
+                                </div>
+                                <div style="padding-top:4px; text-align:center; font-size:13px; font-weight:bold; color:#ba1626;">
+                                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div style="float:left; padding-right:7px;">
+                                <div>
+                                    <img src="http://127.0.0.1:8000/media/default/default.png" style="border-radius:5px; width:60px;">
+                                </div>
+                                <div style="padding-top:4px; text-align:center; font-size:13px; color:grey;">
+                                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock right_side %}

@@ -1,0 +1,187 @@
+{% extends 'main/profile/side_menu/profile_side_menu.jinja' %}
+{% load custom_tags %}
+{% block right_side %}
+    <div class="row" style="margin:0;">
+        <div class="col-md-6" style="height:296px; padding-top:30px; border-bottom:1px solid #d5d5d5; border-right:1px solid #d5d5d5;">
+            {% if tags %}
+                <div style="text-align:center; margin-bottom:20px; font-size:14px;">
+                    유저가 가장 많이 <b>tag</b> 한 단어는
+                </div>
+                {% for tag in tags %}
+                    <div class="row">
+                        <div class="col-12" style="margin-top:5px;">
+                            <div style="float:left; width:23%; margin-left:22px; padding-left:5px; font-size:12px; font-weight:bold; color:#171717;">
+                                {{ tag.0 }}
+                            </div>
+                            <div class="progress" style="float:left; width:180px; height:22px;">
+                                <div class="progress-bar" style="background-color:#b50014; width:{{ tag.1 }}%; height:22px;"></div>
+                            </div>
+                            <div style="float:left; width:10%; font-size:12px; font-weight:bold; margin-left:10px; color:#b50014;">
+                                 {{ tag.1 }}%
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="color:#ba1626; font-weight:bold; text-align:center; margin-top:90px; font-size:14px;">
+                    유저가 남긴 tag 가 없습니다.
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6" style="background-color:#222222; height:296px; border-bottom:1px solid #d5d5d5;">
+            <div style="margin:70px 0 20px 0; font-size:20px;">
+                <div style="text-align:center; color:#c5c5c5;"><a style="font-weight:bold; color:white;">{{ user }}</a> 님은</div>
+                <div style="text-align:center; color:#cd0017; font-weight:bold;">
+                {% if user.is_superuser %}
+                    관리자
+                {% elif user.is_input_game_result %}
+                    Gooner (sub-admin)
+                {% else %}
+                    Gooner
+                {% endif %}
+                </div>
+                <div style="text-align:center; color:#c5c5c5;">
+                    입니다.
+                </div>
+                <div style="margin-top:20px;">
+                    <div style="position:absolute; left:139px; top:205px; font-size:12px; margin-right:50px; color:#c4c4c4; margin-bottom:5px;">
+                        현재 경험치
+                    </div>
+                    <div style="position:absolute; left:15px; top:178px; color:#ebebeb; float:left; width:14%; margin-left:30px; font-size:15px;">
+                        LV <a style="font-weight:bold;">{{ user.point.level }}</a>
+                    </div>
+                    <div class="progress" style="position:absolute; left:87px; top:180px; background-color:#5c5c5c; width:170px; height:19px;">
+                        <div class="progress-bar" style="position:absolute; left:0; top:0;  height:19px; border:none; background-color:#ebebeb; width:{{ user.point.experience|experience_ratio:user.point.max_experience }}%;"></div>
+                    </div>
+                    <div style="position:absolute; left:257px; top:178px; float:left; width:12%; font-size:15px; margin-left:10px; color:#d5d5d5;">
+                        <a style="color:#d5d5d5; font-weight:bold;">{{ user.point.experience|experience_ratio:user.point.max_experience }}</a> %
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin:0;">
+        <div class="col-md-12">
+            {% if after %}
+                <div class="row">
+                    <div class="col-md-12" style="margin:20px 0 10px 60px; font-size:14px;">
+                        유저가 경기 후 전체 리뷰에서 평균적으로 준 점수입니다.
+                    </div>
+                </div>
+                <div class="row" style="border-bottom:1px solid #d5d5d5; height:135px;">
+                    <div class="col-md-4" style="text-align:center;">
+                        <div style="font-size:13px; font-weight:bold; color:#b50014;">
+                            Team
+                        </div>
+                        <div>
+                            <img src="{{ arsenal.photo.url }}" style="width:50px; margin:5px 0 2px 0;">
+                        </div>
+                        <div style="font-size:13px; font-weight:bold;">
+                            Arsenal
+                        </div>
+                        <div style="font-size:13px; font-weight:bold; color:#b50014; margin-bottom:20px;">
+                            {{ after.0 }}
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="text-align:center;">
+                        <div style="font-size:13px; font-weight:bold; color:#b50014;">
+                            Best Player
+                        </div>
+                        <div>
+                            <img src="{{ after.1.0.name.photo.url }}" style="border-radius:50%; width:50px; margin:5px 0 2px 0;">
+                        </div>
+                        <div style="font-size:13px; font-weight:bold;">
+                            {{ after.1.0.name }}
+                        </div>
+                        <div style="font-size:13px; font-weight:bold; color:#b50014; margin-bottom:20px;">
+                            {{ after.1.1 }}
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="text-align:center;">
+                        <div style="font-size:13px; font-weight:bold; color:#b50014;">
+                            Worst Player
+                        </div>
+                        <div>
+                            <img src="{{ after.2.0.name.photo.url }}" style="border-radius:50%; width:50px; margin:5px 0 2px 0;">
+                        </div>
+                        <div style="font-size:13px; font-weight:bold;">
+                            {{ after.2.0.name }}
+                        </div>
+                        <div style="font-size:13px; font-weight:bold; color:#b50014; margin-bottom:20px;">
+                            {{ after.2.1 }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                 <div class="row" style="height:186px; border-bottom:1px solid #D5D5D5;">
+                    <div class="col-md-12" style="text-align:center; color:#B50014; font-size:13px; font-weight:bold; padding-top:60px;">
+                        <div>
+                            경기 후 리뷰를 작성하시지 않았습니다.
+                        </div>
+                        {% if user == request.user %}
+                            <div class="btn btn-secondary" style="font-size:11px; margin:20px 0 20px 0;">
+                                <a href="{% url 'board_free:choice_write' %}">리뷰 쓰기</a>
+                            </div>
+                        {% else %}
+                            <div style="font-size:11px; margin:20px 0 20px 0;"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-center" style="margin:0;">
+        <div class="col-md-6" style="padding-left:2px; padding-bottom:10px; height:670px; border-right:1px solid #d5d5d5;">
+            {% if before %}
+                <div style="font-size:14px; text-align:center; margin-top:20px">
+                    <a style="font-weight:bold;">{{ user }}</a>님이 가장 선호하는
+                </div>
+                <div style="font-size:14px; text-align:center; margin:5px 0 20px 0;">
+                    전술은 <a style="color:#ba1626; font-weight:bold;">{{ before.0.0.0|modify_strategy }}</a> 입니다.
+                </div>
+                <div style="font-size:11px; text-align:center; margin:5px 0 5px 0;">▶ {{ user }} 님이 각 포지션에 가장 많이 <br>선택한 선수들입니다.<a style="color:#ba1626;">(선호하는 전술 기준)</a><br></div>
+                <div>
+                    {# strategy-전술, player-선수, result-평점 결과를 뿌릴 건지 여부 is_value-후보 선수들이 나올 건지 여부 #}
+                    {% include 'function/strategy/field.jinja' with strategy=before.0.0.0 player1=before.1.0.0 player2=before.2.0.0 player3=before.3.0.0 player4=before.4.0.0 player5=before.5.0.0 player6=before.6.0.0 player7=before.7.0.0 player8=before.8.0.0 player9=before.9.0.0 player10=before.10.0.0 player11=before.11.0.0 result=False is_value=False %}
+                </div>
+            {% else %}
+                <div style="text-align:center;">
+                    <div style="font-size:14px; color:#b50014 ; font-weight:bold; padding-top:200px;">
+                        간단 평점 및 경기 프리뷰를<br>작성하시지 않았습니다.
+                    </div>
+                    {% if user == request.user %}
+                        <div class="btn btn-secondary" style="font-size:11px; margin:20px 0 20px 0;">
+                            <a href="{% url 'board_free:choice_write' %}">리뷰 쓰기</a>
+                        </div>
+                    {% else %}
+                        <div style="font-size:11px; margin:20px 0 20px 0;"></div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12" style="border-bottom:1px solid #d5d5d5;">
+                    {% if event %}
+                        <div style="font-size:15px; text-align:center; margin-top:30px;">
+                            <a style="font-weight:bold;">{{ user }}</a> 님은 경기 전 투표에
+                        </div>
+                        <div style="font-size:15px; text-align:center;">
+                            <a style="font-weight:bold; color:#ba1626;">{{ event|get_item:'event_num' }}</a> 번 투표하셨으며
+                        </div>
+                        <div style="font-size:15px; text-align:center;">
+                            <a style="font-weight:bold; color:#BA1626;">{{ event|get_item:'event_result' }}</a> 번 맞추셨습니다.
+                        </div>
+                        <div style="font-size:15px; text-align:center; margin-bottom:30px;">
+                            (<a style="font-weight:bold; color:#BA1626">{{ event|get_item:'event_ratio' }}</a>%)
+                        </div>
+                    {% else %}
+                        <div style="font-size:13px; text-align:center; margin:30px 0 30px 0;">
+                            경기 전 스코어 맞추기 참여를 하지 않았습니다.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock right_side %}

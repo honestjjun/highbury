@@ -1,0 +1,119 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container">
+        <div class="row" style="border-bottom:1px solid #d5d5d5;">
+            <div class="col-md-3" style="margin: 50px 0 10px 80px;">
+                <a style="font-size: 25px; font-weight: bold;">경기 프리뷰 수정</a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:40px;">
+            <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; margin: 75px 10px 0 0;">
+                <a>매치</a>
+            </div>
+            <div class="col-md-8" style="padding:0;">
+                {# 경기 전 리뷰 페이지 일 경우 #}
+                {% include 'function/strategy/match_review.jinja' with game='before' before=match %}
+            </div>
+        </div>
+        {# 입력 폼 #}
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    제목
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    {{ forms.title }}
+                </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    TAG
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    <input class="form-control" type="text" value="{% if tag %}{{ tag }}{% endif %}" id="tags_id" name="tags" style='width:600px; font-size:14px; height:36px; color:#4a4a4a;'>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 offset-md-2" style="font-size:12px; padding:3px 0 0 10px; color: grey;">
+                    복수의 tag를 입력하기 위해서는 단어 사이에 , 를 찍어 주세요
+                </div>
+            </div>
+            {# input value를 정리 해둔 곳-바로 post로 정보 날라감 #}
+            <input type="hidden" name="sort" value="before">
+
+            <div class="row" style="padding: 20px 0 10px 0;">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12" style="text-align:center; font-size:13px; color:grey;">
+                            * 기존 선택했던 선수는 수정할 수 없습니다.
+                        </div>
+                    </div>
+                    <div class="str4-2-3-1">
+                        <div class="row justify-content-center">
+                            <div style="margin-top:20px;">
+                                {# strategy-전술, player-선수, result-평점 결과를 뿌릴 건지 여부 is_value-후보 선수들이 나올 건지 여부 #}
+                                {% include 'function/strategy/strategy.jinja' with strategy=player.0.strategy player1=player.1.player player2=player.2.player player3=player.3.player player4=player.4.player player5=player.5.player player6=player.6.player player7=player.7.player player8=player.8.player player9=player.9.player player10=player.10.player player11=player.11.player result=False is_value=False %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {# 내용 등록 #}
+            <div class="row" style="margin-left:89px;">
+                <div class="col-md-1" style="padding-top:25px; font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; margin-right:10px;">
+                    내용
+                </div>
+                <div class="col-md-9 review_match_body_form" style="padding:0;">
+                    {{ forms.body }}
+                </div>
+            </div>
+            <div class="row justify-content-center" style="padding-bottom:120px;">
+                <div class="col-md-2">
+                    <a class="btn summer_note" id="change-before-btn" type="submit" style="cursor:pointer; padding-top:12px; font-weight:bold; width:90px; height:42px; border:1px solid #2d2d2d; color:white; font-size:13px; background-color:#2d2d2d;">수 정</a>
+                    {# write free board modal #}
+                    <div class="modal" id="change-before-modal" tabindex="-1" role="dialog" style="top:30%;">
+                        <div class="modal-dialog" role="document" style="width:400px;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="padding-top:10px; padding-left:15px;">
+                                    <div class="row">
+                                        <div class="col-md-12" style="text-align:left; margin-bottom:5px; font-size:14px; color:#2d2d2d;">
+                                            현재 경기 프리뷰를 수정하시겠습니까?<br><br>
+                                            <a style="font-size:12px; color:#ba1626;">경기 프리뷰의 팀과 선수의 평점은 수정을 하실 수 없습니다.</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫 기</a>
+                                    <input type="submit" href="" class="btn btn-secondary" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;" value="수 정">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            $('#change-before-btn').on('click', function(e){
+                e.preventDefault();
+                $('#change-before-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            })
+        });
+    </script>
+{% endblock %}

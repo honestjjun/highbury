@@ -1,0 +1,381 @@
+{% extends 'main/side_menu/main_advertisements.jinja' %}
+{% load static %}
+{% load custom_tags %}
+{% load widget_tweaks %}
+{% block advertise %}
+    {{ block.super }}
+{% endblock advertise %}
+{% block content %}
+    <!-- 최근 경기 플레이어 점수 반영 -->
+    <section id="recent_game_point">
+        <div class="container">
+            <div class="row" style="margin:30px 0 0 0;">
+                {% if result_point %}
+                    <div class="col-md-4" style="text-align:center; color:#940012; margin-bottom:30px;">
+                        <div style="font-size:17px; font-weight:bold;">
+                            Team Point
+                        </div>
+                        <div style="margin-top:3px; margin-bottom:5px; font-size:11px;">
+                            (최근 경기만 반영)
+                        </div>
+                        <img class="rounded-circle" src="{{ arsenal.photo.url }}" style="width:70px;"><br>
+                        <a style="font-size:13px;">{{ result_point.0.0 }} point</a> <a style="font-size:11px;">({{ result_point.0.1 }}명 참여)</a>
+                    </div>
+                    <div class="col-md-4" style="text-align:center; color:#940012; margin-bottom:30px;">
+                        <div style="font-size:17px; font-weight:bold;">
+                            Best Player
+                        </div>
+                        <div style="margin-top:3px; margin-bottom:5px; font-size:11px;">
+                            (최근 경기만 반영)
+                        </div>
+                        <img class="rounded-circle" src="{{ result_point.1.0.name.photo.url }}" style="width:70px;"><br>
+                        <a style="font-size:13px;"><b>{{ result_point.1.0.name }}</b></a> <a style="font-size:11px">({{ result_point.1.1 }} point)</a>
+                    </div>
+                    <div class="col-md-4" style="text-align:center; color:#940012; margin-bottom:30px;">
+                        <div style="font-size:17px; font-weight:bold;">
+                            Worst Player
+                        </div>
+                        <div style="margin-top:3px; margin-bottom:5px; font-size:11px;">
+                            (최근 경기만 반영)
+                        </div>
+                        <img class="rounded-circle" src="{{ result_point.2.0.name.photo.url }}" style="width:70px"><br>
+                        <a style="font-size:13px;"><b>{{ result_point.2.0.name }}</b></a> <a style="font-size:11px">({{ result_point.2.1 }} point)</a>
+                    </div>
+                {% else %}
+                    <div class="col-md-12" style="text-align:center; font-size:14px; color:#940012; margin:30px 0 30px 0;">
+                        아직 평점을 남긴 유저가 없습니다.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- 간단한 유저 상태 -->
+    <section id="user_simple_viewer">
+        <div class="container">
+            {% if request.user.is_authenticated %}
+                {% if user_preview %}
+                    <div class="row justify-content-center">
+                        <div class="col-lg-11 card">
+                            <div class="row" style="margin:10px 0 0 0;">
+                                <div class="col-md-4" style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">
+                                    최근 경기 간단 평점<br>
+                                    <a href="{% url 'arsenal:vote' %}#gooner_simple_point" style="color:#8926ff;">
+                                        {% if user_preview|get_item:'simple_point' %}
+                                            평점 완료
+                                        {% else %}
+                                            미완료
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-4" style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">
+                                    다음 경기 스코어 맞추기<br>
+                                    <a href="{% url 'arsenal:vote' %}#gooner_score_correct" style="color:#8926ff;">
+                                        {% if user_preview|get_item:'score_correct' %}
+                                            응모 완료
+                                        {% else %}
+                                            미완료
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-4" style="text-align:center; font-size:13px; font-weight:bold; margin-bottom:10px;">
+                                    현재 진행 중인 설문 참여율<br>
+                                    <a href="{% url 'arsenal:vote' %}#gooner_question" style="color:#8926ff;">
+                                        {{ user_preview|get_item:'question' }}%
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div style="border-bottom:1px solid #ddd;"></div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- 최근 게시판 리스트 -->
+    <section id="recent_write_board">
+        <div class="container">
+            <div class="row" style="margin-top:30px; border-bottom:1px solid #ddd;">
+                <div class="col-md-6" style="padding:0 30px 0 30px; margin-bottom:30px;">
+                    <div style="padding-bottom:7px; border-bottom:2px solid #ba1626;">
+                        <a style="font-size:16px; color:#2d2d2d; font-weight:bold; margin-left:40px;">최근 자유 게시판</a>
+                        <a href="{% url 'board_free:list' %}" style="font-size:12px; color:grey; float:right; padding-top:10px;">더보기</a>
+                    </div>
+                    <table class="table">
+                        {% for article in recent_article %}
+                            <tr style="border-bottom:1px solid #e6e6e6;">
+                                <td style="border:none; text-align:center; width:20px; font-size:12px; margin-left:5px;">
+                                    {{ article.id }}.
+                                </td>
+                                <td style="padding-left:0; border:none; font-size:13px;">
+                                    <a href="{% url 'board_free:detail' id=article.id slug=article.slug %}" style="margin-left:7px;">{{ article.title|truncatechars:34 }} <a style="color:#ba1626; font-size:12px;">({{ article.comments.all|length }})</a></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-md-6" style="padding:0 30px 0 30px; margin-bottom:30px;">
+                    <div style="padding-bottom:7px; border-bottom:2px solid #ba1626;">
+                        <a style="font-size:16px; color:#2d2d2d; font-weight:bold; margin-left:40px;">최근 리뷰 게시판</a>
+                        <a href="{% url 'board_free:review_list' value='1' %}" style="float:right; font-size:12px; color:grey; padding-top:10px;">더보기</a>
+                    </div>
+                    <table class="table">
+                        {% for article in recent_review %}
+                            <tr style="border-bottom:1px solid #e6e6e6;">
+                                <td style="border:none; text-align:center; width:60px; font-size:12px; color:#ba1626; margin-left:5px;">
+                                    {{ article.set_sort }}
+                                </td>
+                                <td style="padding-left:0; border:none; font-size:13px;">
+                                    <a href="{% url 'board_free:detail' id=article.id slug=article.slug %}" style="margin-left:7px;">{{ article.title|truncatechars:34 }} <a style="color:#ba1626; font-size:12px;">({{ article.comments.all|length }})</a></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 경기 리스트 및 순위 -->
+    <section id="game_match_viewer">
+        <div class="container">
+            <div class="row" style="margin-top:40px; border-bottom:1px solid #dfdfdf;">
+                <div class="col-md-4" style="margin-bottom:40px;">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:5px; font-size:18px; font-weight:bold; color:#1e1e1f; text-align:center;">
+                            최근 경기
+                        </div>
+                    </div>
+                    {% if recent_match %}
+                        <table class="table">
+                            <tr>
+                                <td style="border:none; text-align:right; vertical-align:middle; width:100px; font-size:15px; font-weight:bold; padding:0; margin:0;">
+                                    {{ recent_match.home_team }}
+                                </td>
+                                <td style="border:none; text-align:right; vertical-align:middle; height:50px; width:40px; padding:0; margin:0;">
+                                    <img src="{{ recent_match.home_team.team.photo.url }}" style="width:40px;">
+                                </td>
+                                <td style="border:none; text-align:center; vertical-align:middle; width:20px; font-size:15px; padding:0; margin:0;">
+                                    {{ recent_match.home_score }}
+                                </td>
+                                <td style="border:none; text-align:center; vertical-align:middle; width:10px; font-size:12px; padding:0; margin:0;">
+                                    :
+                                </td>
+                                <td style="border:none; text-align:center; vertical-align:middle; width:20px; font-size:15px; padding:0; margin:0;">
+                                    {{ recent_match.away_score }}
+                                </td>
+                                <td style="border:none; text-align:left; vertical-align:middle; width:40px; height:50px; padding:0; margin:0;">
+                                    <img src="{{ recent_match.away_team.team.photo.url }}" style="width:40px">
+                                </td>
+                                <td style="border:none; text-align:left; vertical-align:middle; width:100px; font-size:15px; font-weight:bold; padding:0; margin:0;">
+                                    {{ recent_match.away_team }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="font-size:13px; border:none; text-align:center; padding:0; margin:0;">
+                                    {{ recent_match.match_date|date:'y.m.d H:i' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="font-size:13px; border:none; text-align:center; padding:0; margin:0;">
+                                    {{ recent_match.home_team.team.stadium }}
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="row" style="text-align:center; margin-top:20px;">
+                            <div class="col-md-12" style="font-size:15px; font-weight:bold; color:#2d2d2d; margin-bottom:8px;">
+                                경기 후 리뷰 <a style="color:#ba1626; font-weight:normal;">({{ recent_match_review|length }})</a>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            {% if recent_match_review %}
+                                {% for post in recent_match_review %}
+                                    <div class="col-md-9 card" style="margin-bottom: 6px;">
+                                        <div style="font-size:13px; font-weight:bold; color:#2d2d2d; padding-top:6px;">
+                                            <a href="{% url 'board_free:detail' id=post.id slug=post.slug %}">{{ post.title|truncatechars:22 }}</a>
+                                        </div>
+                                        <div style="font-size:12px; color:grey; padding-bottom:6px;">
+                                            {{ post.author }} | {{ post.created|date:'y.m.d [H:i]' }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if recent_match_review|length == 5 %}
+                                    <a class="btn" href="{% url 'board_free:review_list' value="after" %}?id={{ recent_match.id }}" style="font-size:12px; border:1px solid #d00000; width:100px; margin-top:15px;">more..</a>
+                                {% endif %}
+                            {% else %}
+                                <div style="font-size:14px;">
+                                    작성된 리뷰가 없습니다.
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        최근 경기가 존재하지 않습니다.
+                    {% endif %}
+                </div>
+                <div class="col-md-4" style="margin-bottom:40px;">
+                    <div class="row">
+                        <div class="col-md-12" style="font-size:18px; margin-bottom:5px; font-weight:bold; color:#1e1e1f; text-align:center;">
+                            다음 경기
+                        </div>
+                    </div>
+                    {% if next_match %}
+                        <table class="table">
+                            <tr>
+                                <td style="border:none; text-align:right; vertical-align:middle; width:100px; font-size:15px; font-weight:bold; padding:0; margin:0;">
+                                    {{ next_match.home_team }}
+                                </td>
+                                <td style="border:none; text-align:right; vertical-align:middle; height:50px; width:40px; padding:0; margin:0;">
+                                    <img src="{{ next_match.home_team.team.photo.url }}" style="width:40px;">
+                                </td>
+                                <td style="border:none; text-align:center; vertical-align:middle; width:30px; font-size:12px; padding:0; margin:0;">
+                                    vs
+                                </td>
+                                <td style="border:none; text-align:left; vertical-align:middle; width:40px; height:50px; padding:0; margin:0;">
+                                    <img src="{{ next_match.away_team.team.photo.url }}" style="width:40px">
+                                </td>
+                                <td style="border:none; text-align:left; vertical-align:middle; width:100px; font-size:15px; font-weight:bold; padding:0; margin:0;">
+                                    {{ next_match.away_team }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="font-size:13px; border:none; text-align:center; padding:0; margin:0;">
+                                    {{ next_match.match_date|date:'y.m.d H:i' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="font-size:13px; border:none; text-align:center; padding:0; margin:0;">
+                                    {{ next_match.home_team.team.stadium }}
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="row" style="text-align:center; margin-top:20px;">
+                            <div class="col-md-12" style="font-size:15px; font-weight:bold; color:#2d2d2d; margin-bottom:8px;">
+                                경기 프리뷰 <a style="color:#ba1626; font-weight:normal;">({{ next_match_review|length }})</a>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            {% if next_match_review %}
+                                {% for post in next_match_review %}
+                                    <div class="col-md-9 card" style="margin-bottom: 6px;">
+                                        <div style="font-size:13px; font-weight:bold; color:#2d2d2d; padding-top:6px;">
+                                            <a href="{% url 'board_free:detail' id=post.id slug=post.slug %}">{{ post.title|truncatechars:22 }}</a>
+                                        </div>
+                                        <div style="font-size:12px; color:grey; padding-bottom:6px;">
+                                            {{ post.author }} | {{ post.created|date:'y.m.d [H:i]' }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if next_match_review|length == 5 %}
+                                    <a class="btn" href="{% url 'board_free:review_list' value="before" %}?id={{ recent_match.id }}" style="font-size:12px; border:1px solid #d00000; width:100px; margin-top:15px;">more..</a>
+                                {% endif %}
+                            {% else %}
+                                <div style="font-size:14px;">
+                                    작성된 리뷰가 없습니다.
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        최근 경기가 존재하지 않습니다.
+                    {% endif %}
+                </div>
+                <div class="col-md-4 main-ranking" style="text-align:center; margin-top:20px; margin-bottom:40px;">
+                    <div style="text-align:center; font-size:18px; font-weight:bold; color:#1e1e1f;">
+                        현재 순위
+                    </div>
+                    <div>
+                        <a href="{% url 'arsenal:match' %}" style="float:right; font-size:11px; color: #a8a8a8; padding:0 15px 4px 0;">더보기</a>
+                    </div>
+                    <table class="table">
+                        <tr class="main-ranking-value">
+                            <td>순위</td>
+                            <td style="width:25px;">팀</td>
+                            <td>승</td>
+                            <td>무</td>
+                            <td>패</td>
+                            <td>승점</td>
+                        </tr>
+                        {% for team in ranking %}
+                            <tr class={% if team.team.name == 'Arsenal' %}"main-arsenal"{% else %}"main-ranking-team"{% endif %}>
+                                <td>{{ team.ranking }}</td>
+                                <th><img src="{{ team.team.photo.url }}" style="width:25px;"></th>
+                                <td>{{ team.win }}</td>
+                                <td>{{ team.draw }}</td>
+                                <td>{{ team.lose }}</td>
+                                <td>{{ team.benefit }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 선수 리뷰 -->
+    <section id="player_review">
+        <div class="container" style="margin-top:40px; border-bottom:1px solid #ddd;">
+            <div class="row">
+                <div class="col-md-12" style="text-align:left; padding-left:120px; font-size: 18px; font-weight:bold;">
+                    선수 리뷰
+                </div>
+            </div>
+            <div class="row justify-content-center;" style="margin-top:20px;">
+                {% for player in player_sort %}
+                    <div class="col-lg-3 col-md-6 col-sm-12" style="margin-bottom:30px;  padding-left:30px; padding-right:30px;">
+                        <div class="media">
+                            <div class="media-heading" style="text-align:center;">
+                                <img class="rounded" src="{{ player.0.name.photo.url }}" style="width:80px;"><br>
+                                <a style="font-size:13px; color:#2d2d2d; font-weight:bold;">{{ player.0.name }}</a>
+                            </div>
+                            <div class="media-body" style="text-align:center;">
+                                <a style="font-size:14px; font-weight:bold; color:#414141;">선수 리뷰 비율</a><br>
+                                <a style="font-size:15px; color: #b20000; font-weight:bold;">{{ player.1 }}%</a><br>
+                                <a class="btn" href="{% url 'board_free:review_list' value="player" %}?id={{ player.0.id }}" style="font-size:11px; border:1px solid #b20000; width:65px; margin-top:10px; padding-top:5px;">more..</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <a>작성된 선수 리뷰가 없습니다.</a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- 구너 랭킹 -->
+    <section id="gooner_ranking">
+        <div class="container" style="margin-top:40px; margin-bottom:70px;">
+            <div class="row" style="margin-bottom:20px;">
+                <div class="col-md-12" style="padding-left:120px;">
+                    <a style="font-size:18px; font-weight:bold;">구너 랭킹</a><br>
+                    <a style="font-size:13px; color:#ba1626;">랭킹은 경험치 기준으로 정해지게 됩니다.</a>
+                </div>
+            </div>
+            <div class="row">
+                {% for gooner in user_ranking %}
+                    <div class="col-lg-2 col-md-4 col-sm-6" style="text-align:center; margin-bottom:30px;">
+                        <div style="margin-bottom:10px;">
+                            <img src="{{ gooner.user.photo.url }}" style="border-radius:50%; width:100px;">
+                        </div>
+                        <div style="font-size:15px; font-weight:bold;">
+                            {{ gooner.user.nickname }}
+                        </div>
+                        <div style="font-size:14px; font-weight:normal;">
+                            Lv {{ gooner.level }}
+                        </div>
+                        <div style="font-size:16px; font-weight:bold;">
+                            {% if forloop.counter == 1 %}
+                                <a style="color:#ba1626;">{{ forloop.counter }}등</a>
+                            {% else %}
+                                {{ forloop.counter }}등
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block domready %}
+    {{ block.super }}
+{% endblock %}

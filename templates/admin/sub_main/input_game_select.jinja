@@ -1,0 +1,25 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    {% for game in games %}
+        <div class="row justify-content-center">
+            <div class="card before-match-match" style="margin: 30px 0 10px 0; padding-bottom:15px; width: 450px; text-align: center;">
+                <div style="text-align:center; font-weight:bold; color: #605c65; margin-top:20px;">매치 리뷰</div>
+                <h4 style="margin-top:8px;">
+                    <a style="position:absolute; padding-top:2px; width:130px; top:57px; left:20px; text-align:right; font-size:16px; font-weight:bold; color:#545454;">{{ game.home_team }}</a>
+                    <img src="{{ game.home_team.team.photo.url }}" style="position:absolute; padding-top:2px; width:32px; left:160px;">
+                    <a style="font-size:18px; text-align:center; color:#747474;">vs</a>
+                    <img src="{{ game.away_team.team.photo.url }}" style="position:absolute; padding-top:2px; width:32px; right:160px;">
+                    <a style="position:absolute; padding-top:2px; width:130px; top:57px; right:20px; text-align:left; font-size:16px; font-weight:bold; color:#545454;">{{ game.away_team }}</a>
+                </h4>
+                <p style="margin:3px 0 15px 0; font-size:13px; color:#777777;">
+                    {{ game.home_team.team.stadium }}<br>
+                    <b style="color:#2d2d2d;">{{ game.set_round }}</b><br>
+                    {{ game.match_date|date:'m월d일 h:i' }}
+                </p>
+                <div style="margin:0 auto;">
+                    <a class="btn btn-secondary" href="{% url 'administrator:input_game_result' match_id=game.id %}" style="width:120px; font-weight:bold; font-size:12px; text-align:center;">경기 결과 입력</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

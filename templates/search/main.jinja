@@ -1,0 +1,272 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center" style="width:1100px;">
+            <div class="col-md-5">
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                        <form action="{% url 'search:search' %}" method="get" class="search_form">
+                            {% csrf_token %}
+                            <label for="search_form"></label>
+                            <div class="input-group">
+                                <input type="text" id="search_form" class="form-control" name="search_total_value" placeholder="검색어를 입력해주세요.." value="{% if data %}{{ data }}{% endif %}" style="font-size:13px; color:grey;">
+                                <span class="input-group-btn">
+                                    <input type="submit" value="Search" class="btn" style="font-size:13px; background-color:#ba1626; color:white; border:1px solid #ba1626;">
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin:5px 0 0 2px;">
+                        <div style="float:left; font-size:12px; color:grey; font-weight:bold;">
+                            인기 TAG :
+                        </div>
+                        {% for tag in popular_tags %}
+                            <div style="float:left; color:blue; font-size:12px; margin-left:6px;">
+                                <a href="{% url 'search:search2' data=tag.0 %}">{{ tag.0 }}</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="col-md-12" style="margin:20px 0  20px 10px;">
+                        <h4 style="color:#2d2d2d; font-weight:bold;">작가 검색</h4>
+                        <div style="padding-left:10px;">
+                            <div style="font-size:15px; margin-bottom:10px;">
+                                '<a style="font-weight:bold;">{{ data }}</a>'로 검색한 결과<br>
+                            </div>
+                            {% if not users %}
+                                <div style="font-size:14px; color:#a3a3a3;">
+                                    유저가 존재하지 않습니다.
+                                </div>
+                            {% else %}
+                                <div class="row">
+                                    {% for user in users %}
+                                        <div class="col-md-2" style="text-align:center;">
+                                            <div style="margin-bottom:5px;">
+                                                <img src="{{ user.photo.url }}" style="border-radius:50%; width:90px;">
+                                            </div>
+                                            <div class="dropdown" style="">
+                                                <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer; font-size:15px; font-weight:bold;">{{ user.nickname }}</a>
+                                                {% include 'function/user_profile_modal/menu_modal.jinja' with user=user %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:100px;">
+                    <div class="col-md-12" style="margin:20px 0 20px 10px;">
+                        <div>
+                            <h4 style="color:#2d2d2d; font-weight:bold;">게시글 검색</h4>
+                            <div style="padding-left:10px;">
+                                <div style="font-size:15px; margin-bottom:10px;">
+                                    '<a style="font-weight:bold;">{{ data }}</a>'로 검색한 결과<br>
+                                </div>
+                                <div class="col-md-12" style="">
+                                    <div class="row justify-content-center" style="width:1050px;">
+                                        <div class="col-md-6">
+                                            <div class="row" style="width:470px;">
+                                                <div class="col-md-12" style="margin-top:10px; margin-bottom:20px;">
+                                                    <div style="padding-bottom:7px; border-bottom:2px solid #2d2d2d;">
+                                                        <a style="font-size:16px; color:#2d2d2d; font-weight:bold; margin-left:20px;">제목으로 검색</a>
+                                                        <a href="{% url 'board_free:list' %}" style="font-size:12px; color:grey; position:absolute; top:8px; left:400px;">더보기</a>
+                                                    </div>
+                                                    <table class="table" style="">
+                                                        {% for post in posts %}
+                                                            <tr style="border-bottom:1px solid #e6e6e6;">
+                                                                <td style="border:none; width:20px; font-size:12px; padding-left:20px; padding-right:0;">
+                                                                    {{ post.id }}.
+                                                                </td>
+                                                                <td style="border:none; font-size:13px; padding-left:20px;">
+                                                                    <a href="{% url 'board_free:detail' id=post.id slug=post.slug %}" style="margin-left:7px;">{{ post.title|truncatechars:34 }} <a style="color:#ba1626; font-size:12px;">({{ post.comments.all|length }})</a></a>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row" style="width:470px; float:right; margin-right:60px; ">
+                                                <div class="col-md-12" style="margin-top:10px; margin-bottom:20px;">
+                                                    <div style="padding-bottom:7px; border-bottom:2px solid #2d2d2d;">
+                                                        <a style="font-size:16px; color:#2d2d2d; font-weight:bold; margin-left:20px;">TAG로 검색</a>
+                                                        <a href="{% url 'board_free:review_list' value='1' %}" style="font-size:12px; color:grey; position:absolute; top:8px; left:400px;">더보기</a>
+                                                    </div>
+                                                    <table class="table" style="">
+                                                        {% for article in recent_review %}
+                                                            <tr style="border-bottom:1px solid #e6e6e6;">
+                                                                <td style="border:none; text-align:center; width:80px; font-size:12px; color:#ba1626; padding-left:5px; padding-right:0;">
+                                                                    {{ article.set_sort }}
+                                                                </td>
+                                                                <td style="padding-left:0; border:none; font-size:13px;">
+                                                                    <a href="{% url 'board_free:detail' id=article.id slug=article.slug %}" style="margin-left:7px;">{{ article.title|truncatechars:34 }} <a style="color:#ba1626; font-size:12px;">({{ article.comments.all|length }})</a></a>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="border-bottom:1px solid #ddd;">
+                                    제목으로 검색한 결과
+                                </div>
+                                {% if not post_lists %}
+                                    <div style="font-size:14px; color:#a3a3a3;">
+                                        게시물이 존재하지 않습니다.
+                                    </div>
+                                {% else %}
+                                    <h5>'{{ data }}' 포함된 글({{ post_lists|length }}):</h5>
+                                        {% for post in post_lists %}
+                                            <h6><a href="{{ post.get_absolute_url }}">{{ post.title }}</a> | {{ post.created|date:'Y.m.d. H:i' }}</h6>
+                                        {% endfor %}<br>
+                                {% endif %}
+                            </div>
+                            <div style="margin-left:10px;">
+                                <div style="border-bottom:1px solid #ddd;">
+                                    Tag 로 검색한 결과
+                                </div>
+                                {% if not post_tag_lists %}
+                                    게시물이 존재하지 않습니다.
+                                {% else %}
+                                    <h5>'{{ data }}' 포함된 글({{ post_tag_lists|length }}):</h5>
+                                        {% for post in post_tag_lists %}
+                                            <h6><a href="{{ post.get_absolute_url }}">{{ post.title }}</a> | {{ post.created|date:'Y.m.d. H:i' }}</h6>
+                                        {% endfor %}<br>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'function/message_modal/charge_modal.jinja' %}
+    {% include 'function/message_modal/alert_message.jinja' %}
+{% endblock %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var content = $('#write-message-content');
+            var message_take_user = $('#message-take-user');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                message_take_user.attr('value', $(this).attr('data-value'));
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            {# 메세지 보내기 #}
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'message:message_ajax' %}',
+                    data: {
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                $('#all-charge-reason').attr('style', 'display:none;');
+                $('#etc-charge-reason').attr('style', 'display:show; margin-bottom:10px;');
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                if (charge_sort.attr('value') == 'etc'){
+                    var charge_reason = $('#user-charge-reason');
+                } else {
+                    var charge_reason = $('#all-charge-reason');
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+        })
+    </script>
+{% endblock domready %}

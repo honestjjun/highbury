@@ -1,0 +1,30 @@
+<div class="card-header" style="width:100%; border:1px solid #e27c76; background-color:white; padding:10px 5px 5px 5px;">
+    <table class="table" style="margin-top:10px;">
+        <tr>
+            <td style="border:none; text-align:right; vertical-align:middle; width:32%; padding:0; margin:0;">
+                <img src="{{ game.home_team.team.photo.url }}" style=" width:50px;">
+            </td>
+            <td style="border:none; vertical-align:middle; text-align:center; font-size:18px; width:36%; padding:0; margin:0;">
+                vs
+            </td>
+            <td style="border:none; text-align:left; vertical-align:middle; width:32%; padding:0; margin:0;">
+                <img src="{{ game.away_team.team.photo.url }}" style="width:50px;">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="font-size:13px; border:none; text-align:center; color:#ba1626; padding:0;">
+                {{ game.set_round }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="font-size:13px; border:none; text-align:center; padding:0;">
+                {{ game.match_date|date:'m.d H:i' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="font-size:13px; border:none; text-align:center; padding:0;">
+                {{ game.home_team.team.stadium }}
+            </td>
+        </tr>
+    </table>
+</div>

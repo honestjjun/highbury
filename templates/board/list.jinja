@@ -1,0 +1,236 @@
+{% extends 'board/side_menu/board_side_menu.jinja' %}
+{% load custom_tags %}
+{% load widget_tweaks %}
+{% block left_side %}
+    <div class="row" style="margin-top:20px; margin-bottom:5px;">
+        <div class="col-md-12" style="font-size:30px; font-weight:bold; padding:0 0 0 40px;">
+            자유 게시판
+        </div>
+    </div>
+    <div class="row free-list-table" style="margin-top:5px; margin-right:10px;">
+        <table class="table table-border">
+            <tr class="table-title-text">
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>날짜</th>
+                <th>추천</th>
+                <th>조회</th>
+            </tr>
+            {# 만일 검색 boolean 이 false 일 경우 공지 사항은 나타남-검색 시 공지 사항 안 나타남 #}
+            {% if not search_boolean %}
+               {% for notify in notifies %}
+                   <tr class="table-notify">
+                       <td><kbd>공지</kbd></td>
+                       <td><a href="{{ notify.get_absolute_url }}"><b>{{ notify.title|truncatechars:33 }}</b></a>
+                           {% if notify.comments.all %}
+                               ({{ notify.comments.all|length }})
+                           {% endif %}</td>
+                       <td><img src="{{ notify.user.photo.url }}" class="rounded-circle">{{ notify.user.nickname }}</td>
+                       <td>{{ notify.created|date:'y.m.d H:s' }}</td>
+                       <td>{{ notify.recommends.all|length }}</td>
+                       <td>{{ notify.read }}</td>
+                   </tr>
+               {% endfor %}
+            {% endif %}
+            {# 게시물이 존재 하지 않을 경우 #}
+            {% if not paging.0 %}
+                <tr class="no-article">
+                    <td colspan="6">게시물이 존재하지 않습니다.</td>
+                </tr>
+            {% else %}
+                {# 게시물이 존재 할 경우 #}
+                {% for post in paging.0 %}
+                    {% if post.is_active == False %}
+                        <tr class="article" {% if forloop.last %}id="table-last-article"{% endif %}>
+                            <td style="">{{ post.id }}</td>
+                            <td style="font-size:14px; color:#a4a4a4;">관리자에 의해서 삭제된 게시물 입니다.</td>
+                            <td class="name-article" style="padding-right:0; margin:0;">
+                                <div style="float:left;">
+                                    <img src="{{ post.user.photo.url }}" class="rounded-circle">
+                                </div>
+                                <div class="dropdown" style="float:left;">
+                                    <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer;">{{ post.user.nickname }}</a>
+                                    {% include 'function/user_profile_modal/menu_modal.jinja' with user=post.user %}
+                                </div>
+                            </td>
+                            <td>{{ post.created|date:'y.m.d H:s' }}</td>
+                            <td>{{ post.recommends.all|length }}</td>
+                            <td>{{ post.read }}</td>
+                        </tr>
+                    {% else %}
+                        <tr class="article" {% if forloop.last %}id="table-last-article"{% endif %}>
+                            {% if post.sort == 'free' %}
+                                <td style="">{{ post.id }}</td>
+                            {% else %}
+                                <td style="font-size:13px; color:#ba1626;">{{ post.set_sort }}</td>
+                            {% endif %}
+                            <td><a href="{{ post.get_absolute_url }}">{{ post.title|truncatechars:37 }}</a>
+                                {% if post.comments.all %}
+                                    ({{ post.comments.all|length }})
+                                {% endif %}
+                            </td>
+                            <td class="free-article" style="padding-right:0; margin:0;">
+                                <div style="float:left;">
+                                    <img  src="{{ post.user.photo.url }}" class="rounded-circle">
+                                </div>
+                                <div class="dropdown" style="float:left;">
+                                    <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer;">{{ post.user.nickname }}</a>
+                                    {% include 'function/user_profile_modal/menu_modal.jinja' with user=post.user %}
+                                </div>
+                            </td>
+                            <td>{{ post.created|date:'y.m.d H:s' }}</td>
+                            <td>{{ post.recommends.all|length }}</td>
+                            <td>{{ post.read }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    <div class="row" style="width:880px; padding:0; margin:0;">
+        <div class="col-4" style="padding:0; margin:0;">
+            <a href="{% url 'board_free:choice_write' %}" class="btn btn-secondary" style="background-color:#2d2d2d; width:90px; font-size:13px; border:1px solid #2d2d2d; color:white;">글 작성</a>
+        </div>
+        <div class="col-8" style="padding:0; margin:0;">
+            <form action="" method="post" class="form-inline" style="float:right;">
+                {% csrf_token %}
+                <input type="hidden" name="sort_value" value="search">
+                <label for="searchSelect"></label>
+                <select class="form-control" name="searchSelect" id="searchSelect" style="width:115px; height:36px; font-size:13px; margin-right: 5px;">
+                    <option value="0" {% if select_value == '0' %}selected="selected"{% endif %}>제목+내용</option>
+                    <option value="1" {% if select_value == '1' %}selected="selected"{% endif %}>제목만</option>
+                    <option value="2" {% if select_value == '2' %}selected="selected"{% endif %}>작성자</option>
+                </select>
+                <div class="input-group">
+                    {{ forms.search_value }}
+                    <span class="input-group-btn">
+                        <input class="btn btn-secondary" type="submit" value="Search" style="font-weight:bold; color:#5e5e5e; height:36px; font-size:13px;">
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="margin: 20px 0 50px 0;">
+        {% include 'function/pagination.jinja' with comments=paging.0 prev=paging.1 nxt=paging.2 prevPage=paging.3 nxtPage=paging.4 blockRange=paging.5 %}
+    </div>
+    {% include 'function/message_modal/charge_modal.jinja' %}
+    {% include 'function/message_modal/alert_message.jinja' %}
+{% endblock left_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var content = $('#write-message-content');
+            var message_take_user = $('#message-take-user');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                message_take_user.attr('value', $(this).attr('data-value'));
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            {# 메세지 보내기 #}
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'message:message_ajax' %}',
+                    data: {
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                $('#all-charge-reason').attr('style', 'display:none;');
+                $('#etc-charge-reason').attr('style', 'display:show; margin-bottom:10px;');
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                if (charge_sort.attr('value') == 'etc'){
+                    var charge_reason = $('#user-charge-reason');
+                } else {
+                    var charge_reason = $('#all-charge-reason');
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+        })
+    </script>
+{% endblock domready %}
+

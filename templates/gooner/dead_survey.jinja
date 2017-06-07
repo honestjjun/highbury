@@ -1,0 +1,59 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <div class="container card">
+        <div class="row justify-content-center" style="margin-top:50px; font-size:20px; font-weight:bold;">
+            설문지
+        </div>
+        <!--  기간 만료된 설문지 보기  -->
+        <div class="row justify-content-center" style="margin:30px 0 10px 0; text-align:center; font-size:15px; color:#ba1626; font-weight:bold;">
+            <a href="{% url 'arsenal:vote' %}#gooner_question">진행 중 설문지 보기</a>
+        </div>
+        <!--  현재 진행중인 설문지 보기  -->
+        {% for vote in dead_surveys %}
+            <div class="row justify-content-center" style="margin-top:10px;">
+                <div class="col-xl-6 col-lg-7 col-md-9 col-sm-11 card" style="padding:30px 0 30px 0;">
+                    <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                        Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                    </div>
+                    <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                        설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                    </div>
+                    <!--  vote 가 select 혹은 picture 일 경우  -->
+                    {% if vote.is_sort == 'select' or vote.is_sort == 'picture' %}
+                        <div style="text-align:center; font-size:12px; color:grey; margin-bottom:12px;">
+                            (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                        </div>
+                        <!--  유저가 설문 조사를 한지 안한지 여부 파악  -->
+                        {% for answer in vote.vote_answer_question.all %}
+                            <div style="margin-top:10px;">
+                                <div style="width:80%; margin:0 auto;">
+                                    <div style="font-size:13px; margin-bottom:5px;">
+                                        {% if vote.is_sort == 'picture' %}
+                                            <img class="rounded" src="{{ answer.pic_answer.url }}" style="width:80px; margin-right:5px;">
+                                        {% endif %}
+                                        {{ answer.answer }}
+                                    </div>
+                                    <div>
+                                        {% with total=vote.vote_answer_question.all|vote_num %}
+                                        <div class="progress" style="float:left; width:100%; height:20px; margin-right:10px;">
+                                            <div class="progress-bar" style="float:left; background-color:#b50014; width:{{ answer.vote|ratio_value:total }}%; height:20px;"></div>
+                                        </div>
+                                        <div style="font-size:13px; font-weight:bold;">
+                                            {% if answer.vote %}{{ answer.vote|ratio_value:total }}%{% else %}0.0%{% endif %}
+                                        </div>
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    <!--  작성 설문지일 경우  -->
+                    {% else %}
+                        <div class="row justify-content-center">
+                            <input class="form-control" type="text" id="write_answer" name="write_answer" value="" style="font-size:13px; margin:10px 0 10px 0; color:grey; width:80%;">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>

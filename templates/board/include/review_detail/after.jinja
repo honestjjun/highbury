@@ -1,0 +1,27 @@
+{% load custom_tags %}
+{% for player in post_after %}
+    <div class="{% if forloop.first or forloop.counter0 == 11 or forloop.last %}col-md-12 채{% else %}col-md-6{% endif %}">
+        <div class="media" style="margin-top:70px; padding-left:20px;">
+            {% if player.player or forloop.first %}
+                <img class="rounded-circle d-inline" src="{% if forloop.first %}{{ arsenal.photo.url }}{% else %}{{ player.player.name.photo.url }}{% endif %}" style="width:80px; border:3px solid #ba1626;">
+                <div class="media-body" style="padding-left:15px;">
+                    <h5 style="font-size:19px; color:#ba1626; font-weight:bold;">
+                        {% if forloop.first %}Arsenal{% else %}{{ player.player.name }}{% endif %}
+                        {% if forloop.counter0 > 11 %}
+                            <a style="margin-left:3px; font-size:14px; color:#ba1626; font-weight:normal;">(교체)</a>
+                        {% endif %}
+                        <img src="{{ player.point|give_point }}" style="height:20px; position:relative; left:7px; top:-4px;">
+                    </h5>
+                    <a style="position:relative; top:-7px; font-size:14px; color:#343434;">
+                        {% if forloop.first %}{{ post.body|safe }}{% else %}{{ player.review }}{% endif %}
+                    </a>
+                </div>
+            {% else %}
+                <img class="rounded-circle d-inline" src="http://127.0.0.1:8000/media/default/default.png" style="width:80px; border:3px solid grey;">
+                <div class="media-body" style="padding-left:15px;">
+                    <h5 style="font-size:15px; padding-top:30px; color:grey;">교체 선수 없음</h5>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

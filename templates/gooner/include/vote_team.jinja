@@ -1,0 +1,9 @@
+{% load custom_tags %}
+<div class="col-sm-6" style="padding:5px 0 5px 0;">
+    <img src="{{ 'Arsenal'|find_team }}" style="float:left; width:50px; border:1px solid #2d2d2d; border-radius:50%;">
+    <select class="form-control" name="team_point" style="float:left; width:65%; margin:10px 0 0 5px; font-size:12px; padding:0; height:30px; border:1px solid #999999; color:#4a4a4a;" value="">
+        {% for a in "0123456789" %}
+            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+        {% endfor %}
+    </select>
+</div>

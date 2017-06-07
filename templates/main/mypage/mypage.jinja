@@ -1,0 +1,341 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% load widget_tweaks %}
+{% block right_side %}
+    <form action="{% url 'account:mypage' %}" method="post" enctype="multipart/form-data" onkeydown="if(event.keyCode==13) return false;">
+        {% csrf_token %}
+        <div class="container profile">
+            <div class="row profile-image">
+                <div class="col-12">
+                    <div style="text-align:center;">
+                        <img class="profile_image" src="{{ request.user.photo.url }}" style="width:150px;"><br>
+                        <input type="button" class="btn btn-secondary" value="사진 등록" data-toggle="modal" data-target="#input_profile_picture_modal"><br><br>
+                    </div>
+                </div>
+            </div>
+
+            {# E-mail #}
+            <div class="row e-mail">
+                <div class="col-2">이메일</div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="input-email" value="{{ request.user.email }}" readonly>
+                </div>
+            </div>
+            <div class="row password">
+                <div class="col-2">비밀번호</div>
+                <div class="col-9">
+                    <input class="btn btn-secondary" id="password-change-btn" type="button" value="비밀번호 수정">
+                </div>
+            </div>
+
+            {# Nickname #}
+            {% if update %}
+                <div class="row avail-nickname">
+                    <div class="col-2">닉네임</div>
+                    <div class="col-7">
+                        <input type="text" class="form-control" id="input-nickname" value="{{ request.user.nickname }}" readonly>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-secondary nickname-change-button" type="button">닉네임 수정</button>
+                    </div>
+                </div>
+                <div class="row avail-message">
+                    <div class="offset-2 col-10">
+                        닉네임은 6개월에 한번 만 수정이 가능합니다.<br>
+                        <div>닉네임 수정이 가능합니다.</div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row no-nickname">
+                    <div class="col-2">닉네임</div>
+                    <div class="col-9">
+                        <input type="text" class="form-control" id="input-nickname" value="{{ request.user.nickname }}" readonly>
+                    </div>
+                </div>
+                <div class="row no-message">
+                    <div class="offset-2 col-10">
+                        닉네임은 6개월에 한번 만 수정이 가능합니다.<br>
+                        <div>다음 수정 가능 날짜 ({{ request.user.updated|date:'y.m.d' }})</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {# 성별 #}
+            <div class="row sex">
+                <div class="col-2">성별</div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="input-sex" value="{{ request.user.sex }}" readonly>
+                </div>
+            </div>
+
+            {# 생일 #}
+            <div class="row birth">
+                <div class="col-2">생일</div>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="input-birth" value="{{ request.user.date_of_birth|date:'Y년 m월 d일' }}" readonly><br>
+                </div>
+            </div>
+
+            <div class="separate"></div>
+
+            {# 추가 정보 #}
+            <div class="row help-message">
+                <div class="col-12">
+                    ▶ 추후 이벤트나 공구를 진행하게 될 경우 필요한 정보입니다. 추후 입력 가능하며, 공구외 다른 어떤한 곳에도 사용되지 않습니다.
+                </div>
+            </div>
+
+            <div class="row telephone">
+                <div class="col-2">전화번호</div>
+                <div class="col-9">
+                    {{ forms.tel }}
+                </div>
+            </div>
+
+            <div class="row address">
+                <div class="col-2">주소</div>
+                <div class="col-9">
+                    {{ forms.address }}
+                </div>
+            </div>
+            <div class="row justify-content-center submit-button">
+                <input class="btn btn-secondary" type="submit" value="등 록">
+            </div>
+        </div>
+    </form>
+
+    {% include 'function/message_modal/alert_message.jinja' %}
+
+    {# 비밀번호 수정 modal #}
+    <div class="modal" id="password-change-modal" tabindex="-1" role="dialog" style="top:30%;">
+        <div class="modal-dialog" role="document" style="width:700px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">비밀번호 수정하기</div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {# onkeydown="if(event.keyCode==13) return false;" #}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="old-password" style="font-size:13px; color:#2d2d2d;">기존 비밀번호 확인</label>
+                                <input class="form-control" id="old-password" name="old-password" type="password" value="" style="font-size:13px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" id="old-password-content" style="font-size:12px; color:#ba1626;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="new-password1" style="font-size:13px; color:#2d2d2d; margin-top:10px;">새 비밀번호</label>
+                                <input class="form-control" id="new-password1" name="new_password1" type="password" value="" style="font-size:13px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" id="new-password-content" style="font-size:12px; color:#626262;">
+                                10~20자의 길이에 대문자, 소문자, 영어, 숫자가 포함되어야 합니다.
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="new-password2" style="font-size:13px; color:#2d2d2d; margin-top:10px;">새 비밀번호(확인)</label>
+                                <input class="form-control" id="new-password2" name="new_password2" type="password" value="" style="font-size:13px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                        <input class="btn btn-secondary" id="password-change-confirm-btn" type="submit" data-dismiss="" value="수정" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# 닉네임 수정 modal #}
+    <div class="modal" id="nickname_changeModal" tabindex="-1" role="dialog" aria-labelledby="commentDeleteModal">
+        <div class="modal-location" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="modal-title">닉네임 수정</a>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" onkeydown="if(event.keyCode==13) return false;">
+                        {% csrf_token %}
+                        <label for="input-nickname-value" style="display:none"></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="input-nickname-value" name="nickname">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary same-nickname-check" type="button">중복 확인</button>
+                            </span>
+                        </div>
+                    </form>
+                    <div id="content" data-result="nothing">사용할 닉네임을 입력해주세요</div>
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" data-dismiss="modal">취소</a>
+                    <a href="" class="btn btn-primary" data-toggle="modal" data-target="#nickname_confirmModal">수정</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {# 닉네임 수정 확인 modal 창 #}
+    <div class="modal hide" id="nickname_confirmModal" tabindex="-1" role="dialog" aria-labelledby="commentDeleteModal">
+        <div class="modal-location" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="content_change" data-result="nothing">중복확인을 하셔야 합니다.</div>
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" data-dismiss="modal">닫기</a>
+                    <a href="" class="btn btn-primary confirm-nickname-button" style="display:none">수정</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# 닉네임 수정 확인 modal 창 #}
+    <div class="modal hide" id="input_profile_picture_modal" tabindex="-1" role="dialog" aria-labelledby="commentDeleteModal">
+        <div class="input_profile_picture_modal" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="modal-title">프로필 사진 등록</a>
+                </div>
+                <form action="{% url 'account:input_picture' %}" method="post" onkeydown="if(event.keyCode==13) return false;" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="file" class="btn btn-secondary" id="id_photo" name="photo">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="" class="btn btn-secondary" data-dismiss="modal">취소</a>
+                        <input type="submit" value="등록" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock right_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function() {
+            var old_password = $('#old-password');
+            var new_password1 = $('#new-password1');
+            var new_password2 = $('#new-password2');
+            {# 닉네임 수정 버튼 클릭 시 #}
+            $('.nickname-change-button').on('click', function (e) {
+                e.preventDefault();
+                $('#nickname_changeModal').modal({
+                    show: true,
+                    backdrop: 'static',
+                    keyboard: false
+                })
+            });
+            {# 비밀번호 수정 버튼 클릭 시 #}
+            $('#password-change-btn').on('click', function (e) {
+                old_password.val('');
+                new_password1.val('');
+                new_password2.val('');
+                e.preventDefault();
+                $('#password-change-modal').modal({
+                    show: true,
+                    backdrop: 'static',
+                    keyboard: false
+                })
+            });
+            {# ajax 를 이용해서 현재 비밀번호가 괜찮은지 확인 #}
+            $('#password-change-confirm-btn').on('click', function(e){
+                var old_content = $('#old-password-content');
+                var new_content = $('#new-password-content');
+                e.preventDefault();
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'account:mypage_password_change' %}',
+                    data:{
+                        'old_password': old_password.val(),
+                        'new_password1': new_password1.val(),
+                        'new_password2': new_password2.val()
+                    },
+                    success:function(data){
+                        if(data['status'] != 'none') {
+                            if (data['status'] == 'wrong_data') {
+                                old_content.html('입력이 다 되었는지 확인 하여 주시기 바랍니다.')
+                            } else if (data['status'] == 'wrong_old_password') {
+                                old_content.html('비밀번호가 맞지 않습니다. 다시 입력하여 주시기 바랍니다.')
+                            } else if (data['status'] == 'wrong_password1') {
+                                new_password1.val('');
+                                new_password2.val('');
+                                new_content.html('비밀번호 형식에 대문자, 소문자, 영어, 숫자가 포함되어야 합니다.');
+                                new_content.css('color', '#ba1626')
+                            } else if (data['status'] == 'wrong_both') {
+                                new_password1.val('');
+                                new_password2.val('');
+                                new_content.html('비밀번호가 서로 같지 않습니다. 다시 입력하여 주시기 바랍니다.');
+                                new_content.css({'color': '#ba1626'})
+                            } else if (data['status'] == 'success_change') {
+                                $('#password-change-modal').modal('hide');
+                                $('#write-message-content').html('비밀번호가 정상적으로 수정되었습니다. 감사힙니다.');
+                                $('#write-message').modal({
+                                    show: true,
+                                    backdrop: 'static',
+                                    keyboard: false
+                                })
+                            }
+                        }
+                    }
+                });
+            });
+            {# 만일 괜찮아서 write-message 창이 떴다면 redirect 시켜 버린다. #}
+            $('#result-ok-btn').on('click', function(e){
+                e.preventDefault();
+                window.location.href = 'http://127.0.0.1:8000/mypage'
+            });
+
+            $('.same-nickname-check').on('click', function(e){
+                e.preventDefault();
+                var content = document.getElementById('content');
+                var content_change = document.getElementById('content_change');
+                var nickname_button = $('.confirm-nickname-button');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'account:same_nickname' %}',
+                    data:{
+                        'id':$('#input-nickname-value').val()
+                    },
+                    success:function(data){
+                        if(data['result'] == 'true'){
+                            content.innerHTML = "사용 가능합니다.";
+                            content_change.innerHTML = '등록하시면 6개월 후에 닉네임 변경이 가능하십니다. 변경하시겠습니까?';
+                            nickname_button.show();
+                        }else if(data['result'] == 'none'){
+                            content.innerHTML = "6~15자의 한글, 영어, 숫자만 가능합니다.";
+                            content_change.innerHTML = '닉네임 설정이 완료 되지 않았습니다.';
+                            nickname_button.hide();
+                        }else{
+                            content.innerHTML = "중복 아이디입니다.";
+                            content_change.innerHTML = '닉네임 설정이 완료 되지 않았습니다.';
+                            nickname_button.hide();
+                        }
+                    }
+                });
+            });
+            $('.confirm-nickname-button').on('click', function(){
+                $.post('{% url 'account:nickname_input' %}',
+                    {
+                        'id':$('#input-nickname-value').val()
+                    },
+                    function(data){
+                        if(data['result']=='ok'){
+                            window.location.replace('http://127.0.0.1:8000/mypage')
+                        }
+                    }
+                )
+            });
+        });
+    </script>
+{% endblock %}

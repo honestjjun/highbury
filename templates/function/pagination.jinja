@@ -1,0 +1,48 @@
+{# 댓글 페이징 #}
+<div class="row justify-content-center">
+    {% if comments.has_other_pages %}
+        <ul class="pagination">
+            {% if prev %}
+                <li class="page-item" style="font-size:14px;">
+                    <a class="page-link" href="?page={{ prevPage }}{{ page_move }}">Prev</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" style="font-size:14px;">
+                    <a class="page-link" href="#" tabindex="-1">Prev</a>
+                </li>
+            {% endif %}
+            {% for page_num in blockRange %}
+                {% if forloop.last %}
+                    {% if comments.number == page_num %}
+                        <li class="page-item active" style="font-size:14px;">
+                            <a class="page-link" href="#" style="background-color:#be000b; border:1px solid #BE000B; color:white;">{{ page_num }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item" style="font-size:14px;">
+                            <a class="page-link" href="?page={{ page_num }}{{ page_move }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% if comments.number == page_num %}
+                        <li class="page-item" style="font-size:14px;">
+                            <a class="page-link" href="#" style="background-color:#be000b; border:1px solid #BE000B; color:white;">{{ page_num }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item" style="font-size:14px;">
+                            <a class="page-link" href="?page={{ page_num }}{{ page_move }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if nxt %}
+                <li class="page-item" style="font-size:14px;">
+                    <a class="page-link" href="?page={{ nxtPage }}{{ page_move }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" style="font-size:14px;">
+                    <a class="page-link" href="#" tabindex="-1">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+</div>

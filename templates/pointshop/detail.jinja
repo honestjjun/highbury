@@ -1,0 +1,475 @@
+{% extends 'pointshop/side_menu/pointshop_side_menu.jinja' %}
+{% load staticfiles %}
+{% load custom_tags %}
+{% load template_tags %}
+{% load widget_tweaks %}
+{% block left_side %}
+    <div class="row">
+        <div class="col-sm-4" style="padding:30px 0 0 30px; font-size:14px;">
+            <a href="{% url "pointshop:list" %}">Point Shop</a>
+        </div>
+        <div class="col-sm-8 hidden-xs-down" style="text-align:right; padding:38px 20px 0 0; font-size:11px;">
+            <a href="{% url "pointshop:list" %}">목록으로</a>
+        </div>
+    </div>
+    <div class="row pointshop-detail-row">
+        <div class="col-md-12" style="font-size:20px; font-weight:bold; padding-left:30px; margin-top:10px; padding-bottom:5px; border-bottom:1px solid #ddd;">
+            {{ product.title }} ({{ product.category }})
+        </div>
+    </div>
+
+    <!-- 상품 content -->
+    <div class="row" style="margin-bottom:50px;">
+        <div class="col-md-4" style="margin-top:20px;">
+            <div>
+                <img class="rounded" src="{{ product.image.url }}" style="width:100%; height:100%;">
+            </div>
+            <div style="margin-top:15px; text-align:center;">
+                <a class="btn btn-secondary product-recommend" href="{% url 'pointshop:product_recommend' id=product.id slug=product.slug %}"
+                   data-action="{% if product.recommends.all|find_user:request.user %}비{% endif %}추천" style="font-size:12px; margin:auto; cursor:pointer;">
+                    {% if product.recommends.all|find_user:request.user %}
+                        비추천
+                    {% else %}
+                        추 천
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <div class="col-md-8" style="margin-top:20px; font-size:14px;">
+            <div style="height:135px;">
+                {{ product.information|linebreaks }}
+            </div>
+            <div style="margin-bottom:5px;">
+                {% if product.tags.all %}
+                    {% for tag in product.tags.all %}
+                        <kbd class="bg-primary" style="border:1px solid #457eff; height:22px; padding:1px 3px 2px 3px; margin-right:3px;">#<a href="{% url 'search:search2' data=tag.tag %}" style="color:#ffffff; font-size:11px;">{{ tag.tag }}</a></kbd>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:5px;">
+                추천 수 : <a id="product-recommend-num" style="color:#ba1626; font-weight:normal; padding:0 5px 0 5px;">{{ product.recommends.all|length }}</a>
+            </div>
+            <div style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:5px;">
+                평균 만족도 :
+                {% if point_ratio %}
+                    <a style="color:#ba1626; font-weight:normal; padding:0 5px 0 5px;">{{ point_ratio|get_item:'avg' }}</a> 점 <a style="font-weight:normal; margin-left:5px; padding-top:3px; font-size:12px;">(만점 5점)</a>
+                {% else %}
+                    <a style="color:grey; font-size:14px; font-weight:normal; padding:0 5px 0 5px;">리뷰 작성자가 없습니다.</a>
+                {% endif %}
+            </div>
+            <div style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:5px;">
+                구입 유저 : <a style="color:#ba1626; font-weight:normal; padding:0 5px 0 5px;">{{ product.buyer.all|length }}</a><a style="font-weight:normal;">명</a>
+            </div>
+            <div id="user-point" style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:5px;" value="{{ request.user.point.point }}">
+                유저 포인트 : <a style="color:#ba1626; font-weight:normal; padding:0 5px 0 5px;">{{ request.user.point.point }}</a><a style="font-weight:normal;">포인트</a>
+            </div>
+            {% discount_confirm as discount %}
+            {% if not discount %}
+                <div id="need-point" style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:5px;" value="{{ product.point }}">
+                    필요 포인트 : <a style="color:#ba1626; font-weight:normal; padding:0 5px 0 5px;">{{ product.point }}</a><a style="font-weight:normal;">포인트</a>
+                </div>
+            {% else %}
+                <div id="need-point" style="font-size:14px; font-weight:bold; color:#585858; margin-bottom:10px;" value="{{ product.point|discount_ratio:discount }}">
+                    필요 포인트 : <a class="card-text" style="font-weight:normal; color:#ba1626; margin:0 5px 0 5px;">{{ product.point|discount_ratio:discount }}</a><a style="font-size:14px; font-weight:normal;">포인트</a>
+                    <span class="badge" style="font-size:10px; font-weight:normal; height:18px; padding-top: 4px; background-color:#ba1626; margin:1px 0 0 5px;">{{ discount }}%할인 적용가</span>
+                </div>
+            {% endif %}
+            <div style="margin-top:20px; text-align:center;">
+                {% if request.user in product.buyer.all %}
+                    <div class="btn" style="background-color:#c9c9c9; border:1px solid #c9c9c9; color:white; padding:10px 20px 10px 20px; font-size:15px; margin:auto;">
+                        이미 구매한 상품
+                    </div>
+                {% else %}
+                    <div class="btn" id="buy-btn" style="background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; padding:10px 20px 10px 20px; font-size:15px; margin:auto; cursor:pointer;">
+                        구매하기
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 상품 리뷰 부분 -->
+    <div id="reviews"></div>
+    <div class="row">
+        <div class="col-md-5" style="float:left;">
+            <div style="float:left; font-size:16px; font-weight:bold; padding-left:10px; padding-bottom:5px;">
+                상품 리뷰 <a style="font-weight:normal; font-size:14px;">({{ sort_num.0 }})</a>
+            </div>
+            <div class="btn btn-secondary" id="write-product-review-btn" value="{% if is_write %}already{% elif not is_write and request.user in product.buyer.all %}true{% else %}false{% endif %}"
+                 style="cursor:pointer; float:left; margin-left:10px; font-size:11px; width:62px; height:25px; line-height:25px; padding:0 4px 0 4px;">리뷰 작성
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="hidden-sm-down" style="text-align:right; padding-top:7px; padding-right:10px; font-size:12px; color:grey;">
+                상품 리뷰는 상품 구매자만 작성하실 수 있습니다.
+            </div>
+        </div>
+    </div>
+
+    <div class="row pointshop-detail-row" style="margin-bottom:20px; border-top:1px solid #ddd;">
+        {% for review in reviews.0 %}
+            {% if review.is_active %}
+                <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 0 20px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="float:left; font-size:15px; font-weight:bold;">
+                                <img class="rounded-circle" src="{{ review.user.photo.url }}" style="height:18px; width:18px;">
+                            </div>
+                            <div class="dropdown" style="float:left; font-size:15px; font-weight:bold; padding-left:5px;">
+                                <div class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer; float:left;">{{ review.user }}</div>
+                                {% include 'function/user_profile_modal/menu_modal.jinja' with user=review.user %}
+                            </div>
+                            <div style="float:left;">
+                                <a style="font-weight:normal; font-size:13px; margin:0 5px 0 5px;">|</a><a style="font-size:13px; font-weight:normal;">{{ review.created|date:'y.m.d H:i' }}</a>
+                            </div>
+                            {% if request.user == review.user %}
+                                <div style="float:right; padding:5px 15px 0 0; font-size:13px; color:grey;">
+                                    <a class="product-review-delete" data-href="{% url 'pointshop:delete' product_id=product.id id=review.id sort='review' %}#reviews" style="cursor:pointer;">삭제</a>
+                                </div>
+                            {% else %}
+                                <div style="float:right; padding:5px 15px 0 0; font-size:13px; color:grey;">
+                                    <a class="product-comment-charge" data-id="{{ review.id }}" data-value="{{ review.content|truncatechars:37 }}" style="cursor:pointer;">신고</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row" style="color:#ba1626; font-size:13px; padding:5px 0 0 5px; margin:0;">
+                        만족도 {{ review.satisfaction }} / 5점
+                    </div>
+                    <div class="row" style="font-size:14px; padding:0 0 0 5px; margin:0;">
+                        {{ review.content|linebreaks }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 10px 20px;">
+                    <div style="font-size:14px; color:#8b8b8b;">
+                        관리자에 의해서 삭제된 리뷰입니다.
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+            <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 10px 20px;">
+                <div style="font-size:14px; color:#8b8b8b;">
+                    리뷰가 없습니다.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div style="margin: 0 0 40px 0;">
+        {% include 'function/pagination.jinja' with comments=reviews.0 prev=reviews.1 nxt=reviews.2 prevPage=reviews.3 nxtPage=reviews.4 blockRange=reviews.5 page_move='#pointshop-detail-review' %}
+    </div>
+
+    <!-- 상품 댓글글-->
+    <div id="results"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div style="font-size:16px; font-weight:bold; padding-left:20px; padding-bottom:5px;">
+                    상품 댓글 <a style="font-weight:normal; font-size:14px;">({{ sort_num.1 }})</a>
+                </div>
+                <div class="btn btn-secondary" id="write-product-comment-btn" style="cursor:pointer; margin-left:10px; font-size:11px; width:62px; height:25px; line-height:25px; padding:0 4px 0 4px;">
+                    댓글 작성
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pointshop-detail-row" style="margin-bottom:20px; border-top:1px solid #ddd;">
+        {% for comment in comments.0 %}
+            {% if comment.is_active %}
+                <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 0 20px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="float:left; font-size:15px; font-weight:bold;">
+                                <img class="rounded-circle" src="{{ comment.user.photo.url }}" style="height:18px; width:18px;">
+                            </div>
+                            <div class="dropdown" style="float:left; font-size:15px; font-weight:bold; padding-left:5px;">
+                                <div class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer; float:left;">{{ comment.user }}</div>
+                                {% include 'function/user_profile_modal/menu_modal.jinja' with user=comment.user %}
+                            </div>
+                            <div style="float:left;">
+                                <a style="font-weight:normal; font-size:13px; margin:0 5px 0 5px;">|</a><a style="font-size:13px; font-weight:normal;">{{ comment.created|date:'y.m.d H:i' }}</a>
+                            </div>
+                            {% if request.user == comment.user %}
+                                <div style="float:right; text-align:right; padding:5px 15px 0 0; font-size:13px; color:grey;">
+                                    <a class="product-comment-delete" data-href="{% url 'pointshop:delete' product_id=product.id id=comment.id sort='comment' %}#results" style="cursor:pointer;">삭제</a>
+                                </div>
+                            {% else %}
+                                <div style="float:right; text-align:right; padding:5px 15px 0 0; font-size:13px; color:grey;">
+                                    <a class="product-comment-charge" data-id="{{ comment.id }}" data-value="{{ comment.content|truncatechars:37 }}" style="cursor:pointer;">신고</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row" style="font-size:14px; padding:5px 0 0 5px; margin:0;">
+                        {{ comment.content|linebreaks }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 10px 20px;">
+                    <div style="font-size:14px; color:#8b8b8b;">
+                        관리자에 의해서 삭제된 댓글입니다.
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+            <div class="col-md-12" style="border-bottom:1px solid #ddd; padding:10px 0 10px 20px;">
+                <div style="font-size:14px; color:#8b8b8b;">
+                    댓글이 없습니다.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div style="margin: 0 0 150px 0;">
+        {% include 'function/pagination.jinja' with comments=comments.0 prev=comments.1 nxt=comments.2 prevPage=comments.3 nxtPage=comments.4 blockRange=comments.5 page_move="#pointshop-detail-comment" %}
+    </div>
+
+    {# 알림창 #}
+    {% include 'pointshop/modal/buy_product.jinja' %}
+    {% include 'pointshop/modal/write_review.jinja' %}
+    {% include 'pointshop/modal/write_comment.jinja' %}
+    {% include 'function/message_modal/alert_message.jinja' %}
+    {% include 'function/message_modal/charge_modal.jinja' %}
+
+{% endblock left_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var write_notice = $('#write-message');
+            var content = $('#write-message-content');
+            var message_take_user = $('#message-take-user');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                message_take_user.attr('value', $(this).attr('data-value'));
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            {# 메세지 보내기 #}
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'message:message_ajax' %}',
+                    data: {
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            write_notice.modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+            var charge_modal = $('#charge-modal');
+            var all = $('#all-charge-reason');
+            var etc = $('#etc-charge-reason');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                all.attr('style', 'display:none;');
+                etc.attr('style', 'display:show; margin-bottom:10px;');
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# product comment 신고 버튼을 클릭하게 되었을 때 #}
+            $('.product-comment-charge').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'comment');
+                charge_to.attr('value', $(this).attr('data-id'));
+                all.attr('style', 'display:show; margin-bottom:10px; font-size:13px; color:#505050; height:36px;');
+                etc.attr('style', 'display:none;');
+                charge_modal.modal({
+                    show:true,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                charge_modal_title.text($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                if (charge_sort.attr('value') == 'etc'){
+                    var charge_reason = $('#user-charge-reason');
+                } else {
+                    var charge_reason = $('#all-charge-reason');
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            write_notice.modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+
+            $('.product-recommend').on('click', function(e){
+                e.preventDefault();
+                $.post($(this).attr('href'),
+                    {
+                        action:$(this).data('action')
+                    },
+                    function(data){
+                        if(data['status']=='ok'){
+                            var recommend_button = $('a.product-recommend');
+                            var recommend_action = recommend_button.data('action');
+                            recommend_button.data('action', recommend_action=='추천'?'비추천':'추천');
+                            recommend_button.text(recommend_action=='추천'?'비추천':'추천');
+                            var detail_count = $('#product-recommend-num');
+                            var recommend_count = parseInt(detail_count.text());
+                            detail_count.text(recommend_action=='추천'?recommend_count+1:recommend_count-1);
+                        }
+                    }
+                )
+            });
+            $('#buy-btn').on('click', function(e){
+                e.preventDefault();
+                var user_point = parseInt($('#user-point').attr('value'));
+                var need_point = parseInt($('#need-point').attr('value'));
+
+                if (user_point < need_point) {
+                    $('#write-message-content').html('포인트가 모자라서 구매할 수가 없습니다.');
+                    $('#write-message').modal({
+                        show:true,
+                        backdrop:'static',
+                        keyboard:false
+                    })
+                } else if (user_point >= need_point) {
+                    $('#product-use-point').attr('value', need_point);
+                    $('#buy-product-select-content').html('구매 이후에는 환불을 할 수 없습니다. 구매를 진행하시겠습니까?');
+                    $('#buy-product-select-modal').modal({
+                        show:true,
+                        backdrop:'static',
+                        keyboard:false
+                    })
+                }
+            });
+
+            $('#write-product-review-btn').on('click', function(e){
+                e.preventDefault();
+                var message = $('#write-message');
+                var content = $('#write-message-content');
+                if($(this).attr('value') == 'true') {
+                    $('#write-product-review-content').val('');
+                    $('#write-product-review-modal').modal({
+                        show:true,
+                        backdrop:'static',
+                        keyboard:false
+                    })
+                } else if ($(this).attr('value') == 'already') {
+                    content.html('상품 리뷰를 벌써 입력 하셨습니다.');
+                    message.modal({
+                        show:true,
+                        backdrop:'static',
+                        keyboard:false
+                    })
+                } else {
+                    content.html('상품을 구매해야 리뷰를 작성 하실 수 있습니다.');
+                    message.modal({
+                        show:true,
+                        backdrop:'static',
+                        keyboard:false
+                    })
+                }
+            });
+
+            $('#write-product-comment-btn').on('click', function(e){
+                e.preventDefault();
+                $('#write-product-comment-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            var select_content = $('#select-message-content');
+            var select_confirm_btn = $('#select-message-confirm-btn');
+            var select_message = $('#select-message');
+
+            $('.product-review-delete').on('click', function(e){
+                e.preventDefault();
+                var href = $(this).attr('data-href');
+                select_content.html('작성하신 리뷰를 삭제하시겠습니까?');
+                select_confirm_btn.attr('href', href);
+                select_message.modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+            $('.product-comment-delete').on('click', function(e){
+                e.preventDefault();
+                var href = $(this).attr('data-href');
+                select_content.html('작성하신 댓글을 삭제하시겠습니까?');
+                select_confirm_btn.attr('href', href);
+                select_message.modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+        })
+    </script>
+{% endblock domready %}

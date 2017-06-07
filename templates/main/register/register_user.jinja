@@ -1,0 +1,252 @@
+{% extends 'base.jinja' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center input-user-info">
+            <div class="col-md-10 banner-graphic">
+                <div class="row">
+                    <div class="col-md-3 a">
+                        <div>약관 동의</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 b">
+                        <div>이메일<br>확인</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 c">
+                        <div>회원 정보 입력</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 d">
+                        <div>가입 완료</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-9 card" style="margin-bottom:150px;">
+                <form action="{% url 'account:register' email_barcode=email.barcode %}" method="post" style="margin-bottom:70px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <input class="date_of_birth" type="hidden" name="date_of_birth" value="">
+                    <div class="row">
+                        <div class="col-md-12" style="border-bottom:1px solid #d3d3d3;">
+                            <div style="font-size:25px; color:#2d2d2d; font-weight:bold; padding: 50px 0 10px 20px;">하이버리 회원 가입</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="padding:10px 0 0 20px; color:#ba1626; font-weight:bold;">필수 입력</div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:40px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            이메일
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.email|attr:"readonly" }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:40px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            비밀번호
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.password1 }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:3px;">
+                        <div class="col-md-8 offset-md-2" style="padding:0; font-size:12px; color:grey;">
+                            10~20자의 길이에 대문자, 소문자, 영어, 숫자가 포함되어야 합니다.
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:37px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            비밀번호<a style="font-size:12px; font-weight:normal; color:grey;">(확인)</a>
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.password2 }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:28px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            닉네임
+                        </div>
+                        <div class="col-md-6" style="padding:0">
+                            {{ forms.nickname }}
+                        </div>
+                        <div class="col-md-3" style="padding-left:0;">
+                            <a class="btn nickname-confirm" href="" style="border:1px solid #d3d3d3; padding-top:10px; height:36px; width:80px; font-size:12px; color:#2d2d2d;">중복 확인</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-2" id="register-nickname-message" style="padding:0; margin-top:3px; font-size:12px; color:grey;">
+                            6~15자의 한글 영어 숫자로만 이루어져야 합니다.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-2" style="padding:0; margin-top:3px; font-size:12px; color:#bc8100;">
+                            ** 닉네임은 6개월에 한 번씩 변경 가능합니다. **
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:34px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:4px 10px 0 70px;">
+                            성별
+                        </div>
+                        <div class="col-md-10" style="padding:2px 0 0 0;">
+                            <input type="radio" id="sex-man" name="sex" value="man">
+                            <label for="sex-man" style="font-size:14px;">남자</label>
+                            <input type="radio" id="sex-girl" name="sex" value="girl" style="margin-left:10px;">
+                            <label for="sex-girl" style="font-size:14px;">여자</label>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:34px; padding-bottom:40px; border-bottom:1px solid #d3d3d3;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:6px 10px 0 70px;">
+                            생일
+                        </div>
+                        <div class="col-md-10" style="padding:0;">
+                            <div style="width:20%; float:left;">
+                                <input class="form-control" type="text" name="birth_year" id="birth_year" placeholder="1940~2017" style="font-size:13px; height:36px; color:#4a4a4a; width:100px;">
+                                <label for="birth_year" style="position:absolute; left:107px; top:8px; font-size:13px; color:#2d2d2d;">년</label>
+                            </div>
+                            <div style="width:15%; float:left;">
+                                <input class="form-control" type="text" name="birth_month" id="birth_month" placeholder="1~12" style="font-size:13px; height:36px; color:#4a4a4a; width:60px;">
+                                <label for="birth_month" style="position:absolute; left:208px; top:8px; font-size:13px; color:#2d2d2d;">월</label>
+                            </div>
+                            <div style="width:20%; float:left;">
+                                <input class="form-control" type="text" name="birth_day" id="birth_day" placeholder="1~31" style="font-size:13px; height:36px; color:#4a4a4a; width:60px;">
+                                <label for="birth_day" style="position:absolute; left:315px; top:8px; font-size:13px; color:#2d2d2d;">일</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="padding:10px 0 0 20px; color:#ba1626; font-weight:bold;">선택 입력</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 offset-md-1" style="font-size:13px; color:#2d2d2d; padding:0; margin-top:15px;">
+                            <a style="color:#ba1626;">전화번호와 주소</a>는 추후 이벤트나 공구를 진행하게 될 경우 필요한 정보 입니다.<br>
+                            추후 입력 가능하며, 공구 나 이벤트 진행 외 다른 어떠한 곳에도 사용되지 않습니다.
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:30px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            프로필
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.photo }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 offset-md-2" style="font-size:12px; color:#919191; margin-top:3px; padding:0;">
+                            이미지는 자동 조절되며, 입력 안할 시 default 이미지가 등록됩니다.
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:40px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            전화번호
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.tel }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:40px;">
+                        <div class="col-md-2" style="float:right; color:#2d2d2d; font-size:14px; font-weight:bold; padding:7px 10px 0 70px;">
+                            주소
+                        </div>
+                        <div class="col-md-10" style="padding:0">
+                            {{ forms.address }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" style="margin-top:30px;">
+                        <div class="col-md-5">
+                            <a class="btn register-cancel" href="" style="margin-left:50px; padding-top:12px; margin-right:10px; width:80px; font-size:12px; border:1px solid #b1b1b1; height:36px;">취 소</a>
+                            <input class="btn" id="submit-btn" type="button" data-value="false" value="가입 완료" style="font-size:13px; background-color:#2d2d2d; color:white; height:36px; width:100px;" onclick="gm(this)">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4 modal please-press-confirm" style="width:400px; left:32%; top:25%;" tabindex="-1" role="dialog">
+            <div class="modal-location" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <a style="font-size:15px; color:#606060; font-weight:bold;">닉네임 중복확인을 해주시기 바랍니다.</a>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="" class="btn btn-secondary" style="font-size:13px; padding-top:12px;" data-dismiss="modal">닫 기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4 modal really-out-here" style="width:400px; left:32%; top:25%;" tabindex="-1" role="dialog">
+            <div class="modal-location" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <a style="font-size:15px; color:#606060; font-weight:bold;">회원 등록이 완료 되지 않았습니다.<br>취소하고 메인으로 이동하시겠습니까?</a>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="" class="btn btn-secondary" style="font-size:13px; padding-top:12px;" data-dismiss="modal">닫 기</a>
+                        <a href="" class="btn btn-secondary" style="font-size:13px; padding-top:12px; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white;">확 인</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block domready %}
+    <script>
+        function gm(value) {
+            var submit_btn = document.getElementById('submit-btn');
+            var submit_btn_data = submit_btn.getAttribute('data-value');
+            if (submit_btn_data == 'false') {
+                $('.please-press-confirm').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            }
+        }
+        $(document).ready(function(){
+            $('.nickname-confirm').on('click', function(e){
+                e.preventDefault();
+                var nickname = document.getElementById('register-nickname-message');
+                var submit_btn = $('#submit-btn');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'account:same_nickname' %}',
+                    data:{
+                        'id':$('#highbury-nickname').val()
+                    },
+                    success:function(data){
+                        if (data['result'] == 'none') {
+                            nickname.innerHTML = '6~15자의 한글 영어 숫자로만 이루어져야 합니다.';
+                            nickname.style.cssText = 'padding:0px; margin-top:3px; font-size:12px; color:#1F2EDC;'
+                        } else if (data['result'] == 'false') {
+                            nickname.innerHTML = '존재하는 닉네임 입니다.';
+                            nickname.style.cssText = 'padding:0px; margin-top:3px; font-size:12px; color:#1F2EDC;'
+                        } else if (data['result'] == 'true') {
+                            nickname.innerHTML = '사용가능합니다.';
+                            nickname.style.cssText = 'padding:0px; margin-top:3px; font-size:12px; color:#ba1626;';
+                            submit_btn.attr('data-value', 'true');
+                            submit_btn.attr('type', 'submit');
+                        }
+                    }
+                })
+            });
+            $('.register-cancel').on('click', function(e){
+                e.preventDefault();
+                $('.really-out-here').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            })
+        });
+    </script>
+{% endblock domready %}

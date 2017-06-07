@@ -1,0 +1,53 @@
+{% load custom_tags %}
+<div class="card-header" style="width:100%; border:1px solid #ba1626; background-color:#ba1626; padding:10px 5px 5px 5px;">
+    <table class="table" style="color:white; margin-top:10px;">
+        <tr>
+            <td style="border:none; text-align:right; vertical-align:middle; width:32%; padding:0;">
+                <img class="rounded-circle" src="{{ game.home_team.team.photo.url }}" style="width:50px;">
+            </td>
+            <td style="border:none; {% if game.result == "win" %}color:white;{% else %}color:#ec8f91;{% endif %} text-align:center; vertical-align:middle; font-size:18px; width:16%; padding:0;">
+                {{ game.home_score }}
+            </td>
+            <td style="border:none; text-align:center; vertical-align:middle; width:4%; font-size:12px; padding:0;">
+                :
+            </td>
+            <td style="border:none; {% if game.result == "lose" %}color:white;{% else %}color:#ec8f91;{% endif %} text-align:center; vertical-align:middle; font-size:18px; width:16%; padding:0;">
+                {{ game.away_score }}
+            </td>
+            <td style="border:none; text-align:left; vertical-align:middle; width:32%; padding:0;">
+                <img class="rounded-circle" src="{{ game.away_team.team.photo.url }}" style="width:50px;">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" style="font-size:13px; border:none; text-align:center; color:#fca89e; padding:0;">
+                {{ game.set_round }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" style="font-size:13px; border:none; text-align:center; color:#faf9fc; padding:0;">
+                {{ game.match_date|date:'m.d H:i' }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" style="font-size:13px; border:none; text-align:center; color:#faf9fc; padding:0;">
+                {{ game.home_team.team.stadium }}
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="row">
+    <div class="col-4 card" style="text-align:left; font-size:12px; font-weight:bold; padding-right:0;">프리뷰</div>
+    <div class="col-4 card" style="text-align:center; font-size:12px; font-weight:bold; padding-left:0; padding-right:0;">경기 후 리뷰</div>
+    <div class="col-4 card" style="text-align:right; font-size:12px; font-weight:bold; padding-left:0;">경기 평점</div>
+</div>
+{% comment %}
+{% if game.footballboard_before_game.all %}
+    <a class="btn" href="{% url 'board_free:review_list' value="before" %}?id={{ game.id }}" style="background-color:#2d2d2d; font-size:11px; width:102px; height:32px; text-align:center; padding:8px 2px 0 2px; color:white;">경기 프리뷰 보기</a>
+{% endif %}
+{% if game.footballboard_after_game.all %}
+    <a class="btn" href="{% url 'board_free:review_list' value="after" %}?id={{ game.id }}" style="background-color:#2d2d2d; font-size:11px; width:102px; height:32px; text-align:center; padding:8px 2px 0 2px; color:white;">경기 후 리뷰 보기</a>
+{% endif %}
+{% if game|game_value == True %}
+    <a class="btn" href="{% url 'arsenal:match_point' game=game.id %}" style="background-color:#2d2d2d; font-size:11px; width:85px; height:32px; text-align:center; padding:8px 2px 0 2px; color:white;">평점 보기</a>
+{% endif %}
+{% endcomment %}

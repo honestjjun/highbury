@@ -1,0 +1,12 @@
+{% load humanize %}
+{% for action in actions %}
+    <div style="border-bottom:1px solid #ddd; font-size:14px; {% if action.is_confirm == True %}background-color:#f6f6f6;{% endif %}">
+        <div class="row" style="padding:15px 20px 3px 30px;">
+            <img src="{{ action.user.photo.url }}" style="border-radius:50%; height:20px; width:20px; margin-right:5px;">
+            <a {% if action.is_confirm == False %}style="font-weight:bold;"{% endif %}>{{ action.user }}</a><span style="color:#6b6b6b;"><a style="font-size:13px; margin-left:10px;margin-right:7px;">|</a>{{ action.created|naturaltime }}</span>
+        </div>
+        <div class="row" style="padding:0 20px 15px 40px; {% if action.is_confirm == True %}color:#a2a2a2;{% endif %}">
+            {{ action.user }}님이 <a href="{% url 'board_free:detail' id=action.object_id slug=action.content_object.slug %}#results" style="color:blue; margin:0 7px 0 7px;">{% if action.sort == 'post' %}{{ action.content_object|truncatechars:20 }}{% elif action.sort == 'comment' %}{{ action.comment.content|truncatechars:20 }}{% endif %}</a>{% if action.sort == 'post' %}글{% elif action.sort == 'comment' %}댓글{% endif %}에 댓글을 남기셨습니다.
+        </div>
+    </div>
+{% endfor %}

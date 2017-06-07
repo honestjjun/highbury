@@ -1,0 +1,16 @@
+{% load custom_tags %}
+{% load humanize %}
+<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink" style="width:350px; margin:0;">
+    <div style="font-size:12px;">
+        <div style="text-align:center;">일주일간 알림만 표시합니다.</div>
+        <div class="dropdown-divider"></div>
+        {% for action in notify_count %}
+            <a class="dropdown-item dropdown-notify" href="{% url 'board_free:detail' id=action.object_id slug=action.content_object.slug %}#results" style="padding:2px 20px 2px 20px; margin:0;">
+                {{ action.user }}님이 <span style="color:blue;">{% if action.sort == 'post' %}{{ action.content_object|truncatechars:10 }}{% elif action.sort == 'comment' %}{{ action.comment.content|truncatechars:10 }}{% endif %}</span>
+                {% if action.sort == 'post' %}글{% elif action.sort == 'comment' %}댓글{% endif %}에 댓글을 남기셨습니다.<br> {{ action.created|naturaltime }}
+            </a>
+            <div class="dropdown-divider" style="padding:0;"></div>
+        {% endfor %}
+        <a class="dropdown-item dropdown-notify" href="{% url 'account:notify' %}" style="cursor:pointer; text-align:center;">유저 알림 ({{ notify_count|length }})</a>
+    </div>
+</div>

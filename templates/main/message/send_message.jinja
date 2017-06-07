@@ -1,0 +1,70 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% block right_side %}
+    <div class="row send-message-title">
+        <div class="col-12">
+            <div>쪽지 보내기</div>
+        </div>
+    </div>
+    <hr>
+    <form class="send-message-content" action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="send_user" value="{{ request.user.id }}">
+        <div class="row title">
+            <div class="col-2" style="font-size:14px; padding-top:10px;">받는 사람</div>
+            <div class="col-7">
+                <div>
+                    {{ forms.take_user }}
+                </div>
+                <div id="user-confirm-result" style="margin-top:5px; font-size:12px; color:#9c9c9c;">
+                    받는 사람 닉네임 입력 후 '<a style="color:#ba5761;">유저 확인</a>'을 눌러 주시기 바랍니다.
+                </div>
+            </div>
+            <div class="col-3" style="width:100px; padding-left:60px; height:36px;">
+                <a href="" class="btn btn-secondary user-confirm" style="font-size:13px; padding-top:10px;">유저 확인</a>
+            </div>
+        </div>
+        <div class="input-message-box" style="display:none;">
+            <div class="row">
+                <div class="col-12" style="padding:10px 0 0 42px;">
+                    {{ forms.message }}
+                </div>
+            </div>
+            <div style="text-align:center;">
+            <input class="btn btn-secondary" type="submit" value="쪽지 보내기" style="cursor:pointer; font-size:13px; margin:20px 30px 0 0; font-weight:bold; background-color:#2d2d2d; height:40px; width:140px; border:1px solid #2d2d2d; color:white;"  onkeydown="if(event.keyCode==13) return false;">
+            </div>
+        </div>
+    </form>
+{% endblock right_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+           $('.send-message-content .user-confirm').on('click', function(e){
+               var user_confirm_result = document.getElementById('user-confirm-result');
+               var input_message_box = $('.input-message-box');
+               e.preventDefault();
+               $.ajax({
+                   type:'POST',
+                   url:'{% url 'message:same_nickname' %}',
+                   data: {
+                       'id':$('.input-take-user').val()
+                   },
+                   success:function(data){
+                       if(data['result'] == 'true'){
+                           user_confirm_result.innerHTML = '존재하는 아디이입니다. 입력 하시면 됩니다.';
+                           user_confirm_result.style.cssText = 'margin-top:5px; font-size:12px; color:#ba1626;';
+                           input_message_box.show();
+                       }else if (data['result'] == 'false'){
+                           user_confirm_result.innerHTML = '존재하지 않는 닉네임입니다.';
+                           user_confirm_result.style.cssText = 'margin-top:5px; font-size:12px; color:#1F2EDC;';
+                           input_message_box.hide();
+                       }else if (data['result'] == 'none'){
+                           user_confirm_result.innerHTML = '입력을 하지 않으셨습니다.';
+                           user_confirm_result.style.cssText = 'margin-top:5px; font-size:12px; color:#1F2EDC;';
+                           input_message_box.hide();
+                       }
+                   }
+               })
+            });
+        });
+    </script>
+{% endblock domready %}

@@ -1,0 +1,128 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% load template_tags %}
+{% block advertise %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 card" style="padding:0;">
+                {% sub_top_advertisements as top_advertisements %}
+                {% for advertisement in top_advertisements %}
+                    <a href="{{ advertisement.link }}">
+                        <img class="d-block img-fluid" src="{{ advertisement.banner.url }}" style="width:100%; height:200px;">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock advertise %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- 왼쪽 contents 부분 -->
+            <div class="col-lg-10 col-md-12 board-detail-row">
+                {% block left_side %}
+                {% endblock left_side %}
+            </div>
+
+            <!-- 오른쪽 contents 부분 -->
+            <div class="col-lg-2 hidden-md-down" style="margin-top:70px;">
+                <div class="row">
+                    <div class="col-md-12 card">
+                        <div class="row">
+                            <a  class="col-md-12 btn" href="{% url 'board_free:choice_write' %}" style="height:40px; font-size:13px; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white;">
+                                글 작성
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 광 고 -->
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-md-12 card" style="padding:0;">
+                        {% community_right_advertisements as right_advertisements %}
+                        {% for advertisement in right_advertisements %}
+                            <a href="{{ advertisement.link }}">
+                                <img class="rounded d-block img-fluid" src="{{ advertisement.banner.url }}" style="width:200px; height:200px;">
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; border-bottom:1px solid #dadada; font-weight:bold;">
+                            <div class="col-md-12">
+                                인기 자유 글
+                            </div>
+                        </div>
+                        {% popular_posts as popular_posts %}
+                        {% for post in popular_posts %}
+                            <div class="row">
+                                <div class="col-md-12" style="font-size:13px; padding:6px 0 6px 6px; {% if not forloop.last %}border-bottom:1px solid #dadada;{% endif %}">
+                                    <a href="{% url 'board_free:detail' id=post.id slug=post.slug %}">{{ post.title|truncatechars:17 }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; border-bottom:1px solid #dadada; font-weight:bold;">
+                            <div class="col-md-12">
+                                인기 리뷰 글
+                            </div>
+                        </div>
+                        {% popular_reviews as popular_reviews %}
+                        {% for post in popular_reviews %}
+                            <div class="row">
+                                <div class="col-md-12" style="font-size:13px; padding:6px 0 6px 6px; {% if not forloop.last %}border-bottom:1px solid #dadada;{% endif %}">
+                                    <a href="{% url 'board_football:detail' id=post.id slug=post.slug %}">{{ post.title|truncatechars:17 }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="row" style="padding-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; font-weight:bold; border-bottom:1px solid #DADADA">
+                            <div class="col-md-12">
+                                인기 Tag
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="margin:5px 0 8px 0;">
+                                {% popular_tags as popular_tags %}
+                                {% for tag in popular_tags %}
+                                    <a class="btn" href="{% url 'search:search2' data=tag.0 %}" style="margin:1px 1px 1px 1px; font-size:12px; background-color:#2d2d2d; color:white; padding:3px 6px 3px 6px;">{{ tag.0 }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; font-weight:bold; border-bottom:1px solid #DADADA">
+                            <div class="col-md-12">
+                                진행 중인 설문지
+                            </div>
+                        </div>
+                        {% active_survey as active_survey %}
+                        {% for survey in active_survey %}
+                            <div class="row">
+                                <div class="col-md-12" style="font-size:13px; padding:6px 0 6px 6px; {% if not forloop.last %}border-bottom:1px solid #dadada;{% endif %}">
+                                    <a href="{% url 'arsenal:vote' %}">{{ survey.question|truncatechars:17 }}</a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="row">
+                                <div class="col-md-12" style="text-align:center; font-size:13px; padding:13px 0 13px 6px;">
+                                    진행 중인 설문지가 없습니다.
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+

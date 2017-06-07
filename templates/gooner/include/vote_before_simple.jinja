@@ -1,0 +1,67 @@
+<!--  전술이 4-2-3-1 일때 위치  -->
+{% if strategy == 'strategy_4-2-3-1' %}
+    <div class="card" style="width:342px; height:630px;">
+        <img class="card-img" src="http://127.0.0.1:8000/media/data/football/strategy/soccer_field.jpg" style="width:340px; height:540px;">
+
+        <img class="rounded-circle player1-img" src="{{ player1.name.photo.url }}" style="position:absolute; width:50px; left:146px; top:425px;">
+        <a class="rounded player1" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px;left:132px; top:480px;">{{ player1.back_number }}. {{ player1.name }}</a>
+
+        <img class="rounded-circle player2-img" src="{{ player2.name.photo.url }}" style="position:absolute; width:50px; left:21px; top:320px;">
+        <a class="rounded player2" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:7px; top:375px;">{{ player2.back_number }}. {{ player2.name }}</a>
+
+        <img class="rounded-circle player3-img" src="{{ player3.name.photo.url }}" style="position:absolute; width:50px; left:100px; top:335px;">
+        <a class="rounded player3" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:86px; top:390px;">{{ player3.back_number }}. {{ player3.name }}</a>
+
+        <img class="rounded-circle player4-img" src="{{ player4.name.photo.url }}" style="position:absolute; width:50px; left:191px; top:335px;">
+        <a class="rounded player4" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:177px; top:390px;">{{ player4.back_number }}. {{ player4.name }}</a>
+
+        <img class="rounded-circle player5-img" src="{{ player5.name.photo.url }}" style="position:absolute; width:50px; left:271px; top:320px;">
+        <a class="rounded player5" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:257px; top:375px;">{{ player5.back_number }}. {{ player5.name }}</a>
+
+        <img class="rounded-circle player6-img" src="{{ player6.name.photo.url }}" style="position:absolute; width:50px; left:96px; top:245px;">
+        <a class="rounded player6" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:82px; top:300px;">{{ player6.back_number }}. {{ player6.name }}</a>
+
+        <img class="rounded-circle player7-img" src="{{ player7.name.photo.url }}" style="position:absolute; width:50px; left:201px; top:245px;">
+        <a class="rounded player7" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:187px; top:300px;">{{ player7.back_number }}. {{ player7.name }}</a>
+
+        <img class="rounded-circle player8-img" src="{{ player8.name.photo.url }}" style="position:absolute; width:50px; left:51px; top:125px;">
+        <a class="rounded player8" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:37px; top:180px;">{{ player8.back_number }}. {{ player8.name }}</a>
+
+        <img class="rounded-circle player9-img" src="{{ player9.name.photo.url }}" style="position:absolute; width:50px; left:146px; top:150px;">
+        <a class="rounded player9" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:132px; top:205px;">{{ player9.back_number }}. {{ player9.name }}</a>
+
+        <img class="rounded-circle player10-img" src="{{ player10.name.photo.url }}" style="position:absolute; width:50px; left:241px; top:125px;">
+        <a class="rounded player10" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:227px; top:180px;">{{ player10.back_number }}. {{ player10.name }}</a>
+
+        <img class="rounded-circle player11-img" src="{{ player11.name.photo.url }}" style="position:absolute; width:50px; left:146px; top:55px;">
+        <a class="rounded player11" style="background-color:#ba1626; color:#f7f7f7; font-size: 11px; text-align:center; width:76px; height:20px; position:absolute; padding-top:2px; left:132px; top:110px;">{{ player11.back_number }}. {{ player11.name }}</a>
+
+        {% if player12 %}
+            <img class="rounded-circle" src="{{ player12.name.photo.url }}" style="position:absolute; left:25px; top:545px; width:50px;">
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:18px; top:600px;">{{ player12.back_number }}. {{ player12.name }}</a>
+            <input type="hidden" name="player12" value="{{ player12.id }}">
+        {% else %}
+            <div class="rounded-circle" style="position:absolute; left:25px; top:545px; width:50px; height:50px; background-color:#ddd; border:1px solid #b9b9b9;"></div>
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:8px; top:600px;">교체 없음</a>
+        {% endif %}
+
+        {% if player13 %}
+            <img class="rounded-circle" src="{{ player13.name.photo.url }}" style="position:absolute; left:115px; top:545px; width:50px;">
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:100px; top:600px;">{{ player13.back_number }}. {{ player13.name }}</a>
+            <input type="hidden" name="player13" value="{{ player13.id }}">
+        {% else %}
+            <div class="rounded-circle" style="position:absolute; left:115px; top:545px; width:50px; height:50px; background-color:#ddd; border:1px solid #b9b9b9;"></div>
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:100px; top:600px;">교체 없음</a>
+        {% endif %}
+
+        {% if player14 %}
+            <img class="rounded-circle" src="{{ player14.name.photo.url }}" style="position:absolute; left:205px; top:545px; width:50px;">
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:190px; top:600px;">{{ player14.back_number }}. {{ player14.name }}</a>
+            <input type="hidden" name="player14" value="{{ player14.id }}">
+        {% else %}
+            <div class="rounded-circle" style="position:absolute; left:205px; top:545px; width:50px; height:50px; background-color:#ddd; border:1px solid #b9b9b9;"></div>
+            <a class="rounded" style="background-color:#ba1626; color:white; font-size: 11px; text-align:center; width:80px; height:20px; position:absolute; padding-top:2px; left:190px; top:600px;">교체 없음</a>
+        {% endif %}
+    </div>
+{% else %}
+{% endif %}

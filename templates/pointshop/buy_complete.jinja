@@ -1,0 +1,25 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-7 card" style="text-align:center; font-size:15px; padding-top:50px; margin:80px 0 180px 0;">
+            <div style="font-size:18px; margin-bottom:20px; font-weight:bold;">
+                <p>포인트 구매가 완료되셨습니다.</p>
+                구입해주셔서 감사합니다.</div>
+            <div>
+                <img class="rounded" src="{{ order.product.image.url }}">
+            </div>
+            <div style="margin-top:20px; font-weight:bold;">구매 번호</div>
+            <div style="color:#ba1626;">{{ order.order_number }}</div>
+            <div style="margin-top:5px; font-weight:bold;">사용한 포인트</div>
+            <div style="color:#ba1626;">{{ order.use_point }}</div>
+            <div style="margin-top:5px; font-weight:bold;">남은 포인트</div>
+            <div style="color:#ba1626;">{{ request.user.point.point }}</div>
+            <div style="margin: 10px 0 40px 0;">
+                <div style="margin:0 auto;">
+                    <a class="btn btn-secondary" href="{% url 'pointshop:list' %}" style="cursor:pointer; margin-right:5px; font-size:13px; color:grey; font-weight:bold;">포인트 샵 이동</a>
+                    <a class="btn btn-secondary" href="{% url 'account:achievement' sort=order.product.main_category.id %}" style="cursor:pointer; background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-weight:bold; font-size:13px;">업적 이동</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

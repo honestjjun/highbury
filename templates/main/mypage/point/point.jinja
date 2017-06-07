@@ -1,0 +1,68 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% load custom_tags %}
+{% block right_side %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div style="text-align:center; margin-top:40px;">
+                        <img class="profile_image" src="{{ request.user.photo.url }}" style="width:150px;">
+                        <div style="font-size:20px; font-weight:bold; color:#4d4d4d;">
+                            {{ request.user.nickname }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" style="text-align:center;">
+                    <div style="margin-top:20px; margin-left:185px;">
+                        <div style="text-align:right; width:120px; float:left; font-size:20px; font-weight:bold; color:#2d2d2d; margin-right:20px;">
+                            Level <a style="color:#ba1626;">{{ self_user.level }}</a>
+                        </div>
+                        <div class="progress" style="margin-top:3px; float:left; background-color:#d5d5d5; width:250px; height:24px;">
+                            <div class="progress-bar" style="height:24px; border:none; background-color:#ba1626; width:{{ self_user.experience|experience_ratio:self_user.max_experience }}%;"></div>
+                        </div>
+                        <div style="float:left; margin:1px 0 0 10px; color:#2d2d2d; font-weight:bold; font-size:18px;">
+                            {{ self_user.experience|experience_ratio:self_user.max_experience }}%
+                        </div>
+                    </div>
+                    <div style="margin-top:80px;">
+                        <div style="font-size:23px; font-weight:bold; color:#2d2d2d;">
+                            총 경험치
+                        </div>
+                        <div style="font-size:20px; color:#ba1626;">{{ self_user.total_experience }}</div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:18px; font-weight:bold; color:#2d2d2d;">
+                            사용 가능한 포인트
+                        </div>
+                        <div style="font-size:18px; color:#ba1626;">{{ self_user.point }}</div>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:18px; font-weight:bold; color:#2d2d2d;">
+                            다음 레벨 경험치
+                        </div>
+                        <div style="font-size:18px; color:#ba1626;">
+                            {{ self_user.experience }}
+                        </div>
+                    </div>
+                    <div style="margin:20px 20px 0 20px; border-bottom:1px solid #ddd; padding-bottom:60px;">
+                        <div style="font-size:18px; font-weight:bold; color:#2d2d2d;">
+                            하이버리 순위
+                        </div>
+                        <div style="font-size:14px; color:grey;">
+                            (1000등 이내만 표시 됩니다.)
+                        </div>
+                        <div style="font-size:28px; color:#ba1626;">
+                            {% if value %}
+                                {{ user_ranking }}<a style="font-size:27px;">등</a>
+                            {% else %}
+                                <a style="font-size:16px; color:#ba1626;">순위 내 없음</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock right_side %}

@@ -1,0 +1,29 @@
+{# 댓글 modal #}
+<div class="modal" id="write-product-comment-modal" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">상품 댓글 작성</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'pointshop:detail' id=product.id slug=product.slug %}#results" method="post" onkeydown="if(event.keyCode==13) return false;">
+                {% csrf_token %}
+                <input type="hidden" name="sort" value="write_comment">
+                <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="take-user-message" style="font-size:13px; color:#2d2d2d; margin-top:10px;">댓글</label>
+                            <textarea class="form-control" id="write-product-review-content" placeholder="최대 100글자만 입력 가능합니다." cols="20" name="content" value="" style="font-size:13px; height:200px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                    <input class="btn btn-secondary" type="submit" value="작성" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

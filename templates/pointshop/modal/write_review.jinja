@@ -1,0 +1,39 @@
+ {# 답장 modal #}
+<div class="modal" id="write-product-review-modal" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">상품 리뷰 작성</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'pointshop:detail' id=product.id slug=product.slug %}#reviews" method="post" onkeydown="if(event.keyCode==13) return false;">
+                {% csrf_token %}
+                <input type="hidden" name="user" value="{{ request.user.id }}">
+                <input type="hidden" name="product" value="{{ product.id }}">
+                <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="font-size:13px; color:#2d2d2d; margin-top:10px;">만족도</div>
+                            {% for i in "12345" %}
+                                <input id="select-satisfaction{{ forloop.counter }}" type="radio" name="satisfaction" value="{{ i }}">
+                                <label for="select-satisfaction{{ forloop.counter }}" style="font-size:13px; color:#2d2d2d; margin-top:10px;">{{ i }}점</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="take-user-message" style="font-size:13px; color:#2d2d2d; margin-top:10px;">메세지</label>
+                            <textarea class="form-control" id="write-product-review-content" placeholder="최대 100글자만 입력 가능합니다." cols="20" name="content" value="" style="font-size:13px; height:200px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                    <input class="btn btn-secondary" type="submit" value="작성" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

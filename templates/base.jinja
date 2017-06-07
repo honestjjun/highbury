@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {% load staticfiles %}
+    {% load custom_tags %}
+    <title>{% block title %}Highbury{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<style>
+    .navbar-light .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+    }
+</style>
+<footer>
+    <!-- 상단 소 메뉴 -->
+    <div style="background-color:#000;">
+        <div class="container">
+            <div class="row justify-content-end">
+                <!-- 로그인 하였을 때 -->
+                {% if request.user.is_authenticated %}
+                    <div class="col-lg-12">
+                        <div class="social-icon" style="float:right; color:#ba1626; padding-right:32px;">
+                            <div class="hidden-sm-down" style="float:left;">
+                                <a href="{% url 'account:point' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">Lv {{ request.user.point.level }}</a>
+                            </div>
+                            <div style="float:left;">
+                                <a class="main-profile-nickname" href="{% url 'account:mypage' %}" style="padding:3px 10px 4px 10px; float:left; font-size:11px; color:#ddd; border-left:1px solid #414141;">
+                                    <img class="main-profile-image" src="{{ user.photo.url }}" style="border-radius:50%; width:14px; margin-right:5px;">{{ user.nickname }}
+                                </a>
+                            </div>
+                            {% if notify_count %}
+                                <div class="dropdown" id="notify" style="float:left;">
+                                    <div class="dropdown-toggle" id="dropdownMenuLink notify" data-toggle="dropdown" style="cursor:pointer; float:left; padding:4px 10px 4px 10px; font-size:11px; border-left:1px solid #414141;">
+                                        알림<a class="rounded" style="font-size:10px; margin-left:4px; padding:1px 5px 3px 5px; background-color:#ba1626; color:white;">{{ notify_count|length }}</a>
+                                    </div>
+                                    {% include 'function/main_notify.jinja' with user=request.user %}
+                                </div>
+                            {% else %}
+                                <div style="float:left;">
+                                    <a href="{% url 'account:notify' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">알림</a>
+                                </div>
+                            {% endif %}
+                            {% if messages_count %}
+                                <div id="message-count" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">
+                                    <a href="{% url 'message:take_message_box' %}">쪽지</a><a class="rounded" href="{% url 'message:take_message_box' %}" style="font-size:10px; margin-left:4px; padding:1px 5px 3px 5px; background-color:#ba1626; color:white;">{{ messages_count }}</a>
+                                </div>
+                            {% else %}
+                                <div id="message-count" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">
+                                    <a href="{% url 'message:take_message_box' %}">쪽지</a>
+                                </div>
+                            {% endif %}
+                            <div style="float:left;">
+                                <a href="{% url 'account:logout' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141; border-right:1px solid #414141;">로그아웃</a>
+                            </div>
+                        </div>
+                    </div>
+                <!-- 로그아웃 하였을 때 -->
+                {% else %}
+                    <div class="col-lg-12">
+                        <div class="social-icon" style="float:right; color:#ba1626; padding-right:32px;">
+                            <a href="{% url 'account:register_terms' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">회원 가입</a>
+                            <a href="{% url 'account:login' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141; border-right:1px solid #414141;">로그인</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- nav 메뉴 -->
+    <div style="background-color:#000; border-top:1px solid #b6b6b6;">
+        <div class="container">
+            <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color:#000;">
+                <button class="navbar-toggler navbar-toggler-right" style="border:1px solid #f5f5f5; margin-top:10px;" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-brand" style="padding:0 0 10px 15px">
+                    <a href="{% url 'account:main' %}" style="padding-bottom:5px; margin-bottom:0; font-size:29px; font-weight:bold; color:white;">
+                        <span style="color:#ba1626;">A</span>RSENAL</a>
+                    <a style="position:absolute; top:43px; left:31px; font-size:11px; color:white;">Victoria Concordia Crescit</a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">History<span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'board_free:list' %}" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">Free</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'board_free:review_list' value='1' %}" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">Review</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'arsenal:match' %}" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">League</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'arsenal:vote' %}" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">Gooner</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pointshop:list' %}" style="font-size:15px; color:white; font-weight:bold; padding-top:12px;">Point</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" action="{% url 'search:search' %}" method="get" style="padding-right:15px;">
+                        {% csrf_token %}
+                        <input class="form-control mr-sm-2" type="text" name="search_total_value" placeholder="Search..." value="" style="font-size:13px; height:32px;">
+                        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit" style="font-size:13px; height:32px;">Search</button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 광고 부분 -->
+    <div>
+        {% block advertise %}{% endblock %}
+    </div>
+    <!-- 에러 부분 -->
+    <div id="error-alert"></div>
+    {% if forms.errors or messages %}
+        <div class="main-messages">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if forms.errors %}
+                            {% for field in forms %}
+                                {% for error in field.errors %}
+                                    <div class="alert">
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert">
+                                    <strong>{{ message }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- 내용 부분 -->
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- footer 부분 -->
+    <footer style="background-color:#8F0000;">
+        <div class="container">
+                <div class="row" style="text-align:center;">
+                    <div class="col-sm-12" style="padding:10px 0 10px 0;">
+                        <div class="main-arsenal-logo">
+                            <img src="http://127.0.0.1:8000/media/etc/arsenal.png" style="width:40px;">
+                        </div>
+                        <div class="main-arsenal-write" style="font-size:13px; color:white; font-weight:bold;">
+                            Arsenal Fan Page<br>
+                            TierryJJun
+                        </div>
+                    </div>
+                </div>
+             </footer>
+        </div>
+    </footer>
+
+    <!-- 부 관리자 메뉴 -->
+    <div class="main-sub-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12" style="height:55px;">
+                    {% if request.user.is_superuser %}
+                        <ul>
+                            <li><a href="{% url 'administrator:delete_trash_picture' %}">필요없는 파일들 없애기</a></li>
+                            <li>/</li>
+                            <li><a href="{% url 'administrator:input_game_select' %}">게임 결과 입력</a></li>
+                            <li>/</li>
+                            <li><a href="{% url 'administrator:charge' %}">신고 게시판</a></li>
+                            <li>/</li>
+                            <li><a href="{% url 'administrator:chat' %}">채팅방</a></li>
+                            <li>/</li>
+                            <li><a href="{% url 'administrator:input_pointshop_tags' %}">포인트 샵 태그 입력</a></li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- script 부분 -->
+    <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="{% static 'js/ajaxSetup.js' %}"></script>
+
+    <!-- javascript 부분 -->
+    {% block domready %}
+    {% endblock %}
+</body>
+</html>
+
+
+

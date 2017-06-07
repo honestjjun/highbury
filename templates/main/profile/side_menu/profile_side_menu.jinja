@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {% load staticfiles %}
+    {% load custom_tags %}
+    <title>{% block title %}Title{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <div class="container mypage rounded">
+        <div class="row">
+            <div class="col-md-3" style="text-align:center;">
+                <div style="color:white; font-weight:bold; margin-top:15px;">HIGHBURY PROFILE</div>
+                <img class="rounded-circle" src="{{ user.photo.url }}" style="width:130px; margin-top:40px;"><br>
+                <a style="font-size:23px; font-weight:bold; color:white; margin-bottom:30px;">{{ user.nickname }}</a>
+                <div style="font-size:11px; color:#f9a5a3;">가입일 : {{ user.created|date:'y.m.d' }}</div>
+                <div style="border:1px solid white; margin:17px 0 17px 56px; width:80px;"></div>
+                <div class="user-write" style="">
+                    <b>{{ user.freeboard_set.all|acquire_num:'free' }}</b> 자유 게시판<br>
+                    <b>{{ user.freeboard_set.all|acquire_num:'before' }}</b> 경기 전 리뷰<br>
+                    <b>{{ user.freeboard_set.all|acquire_num:'after' }}</b> 경기 후 리뷰<br>
+                    <b>{{ user.freeboard_set.all|acquire_num:'player' }}</b> 선수 리뷰<br>
+                </div>
+                <div class="profile-button">
+                    <div class="btn {% if profile == '1' %}active{% else %}no-active{% endif %}">
+                        <a href="{% url 'account:profile' user=user %}">프로필</a></div><br>
+                    <div class="btn {% if profile == '2' %}active{% else %}no-active{% endif %}">
+                        <a href="{% url 'account:profile_write' user=user %}">유저 쓴 글</a></div><br>
+                    <div class="btn {% if profile == '3' %}active{% else %}no-active{% endif %}">
+                        <a href="{% url 'account:profile_achievements' user=user sort=1 %}">유저 업적</a></div>
+                </div>
+            </div>
+            <div class="col-md-9" style="margin:0; padding:0;">
+                {% block right_side %}
+                {% endblock right_side %}
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+</body>
+</html>

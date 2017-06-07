@@ -1,0 +1,142 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <div class="container" style="padding-bottom:0;"><br>
+        <div class="row justify-content-center">
+            <div class="col-md-11" style="margin-top:80px; text-align:center;">
+                <div style="font-size:32px; color:#ba1626; padding:50px 0 50px 0; font-weight:bold; border-top:4px solid #ba1626; border-bottom:4px solid #ba1626;">
+                    <img src="{{ 'Arsenal'|find_team }}" style="width:65px; margin-right:5px;">HIGHBURY
+                </div>
+                <div style="font-size:14px; color:grey; margin-top:10px;">
+                    <a href="{% url 'board_free:choice_write' %}">글 선택 화면으로 이동</a>
+                </div>
+                {% if sort == 'before' %}
+                    <div class="row" style="margin:0; padding:0;">
+                        <div class="col-md-12" style="margin-top:30px; padding:0;">
+                            <div class="row" style="margin: 20px 10px 25px 10px;">
+                                <div class="col-md-12">
+                                    <a style="font-size:20px; font-weight:bold;">경기 전 게임</a>&nbsp;<a style="font-size:17px; color:#cc0033;">({{ before_game|length }})</a>
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 10px 10px 20px 0;">
+                                {% for match in before_game %}
+                                    <div class="col-md-3">
+                                        <div class="card card-block" style="width: 234px; margin-bottom:20px; text-align:center;">
+                                            <div class="card-title" style="padding-top:10px">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <img src="{{ match.home_team.team.photo.url }}" width="30"><a style="font-size:18px; color:#2d2d2d; padding-top:20px; margin-left:5px;">{{ match.home_team }}</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12" style="font-size:18px; color:#2d2d2d; margin-bottom:5px;">
+                                                        <a>vs</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <img src="{{ match.away_team.team.photo.url }}" width="30"><a style="font-size:18px; color:#2d2d2d; padding-top:20px; margin-left:5px;">{{ match.away_team }}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="card-text" style="margin:0 0 10px 0; font-size:13px; color:#777777;">{{ match.home_team.team.stadium }}<br><b>{{ match.set_round }}</b><br>
+                                                {{ match.match_date|date:'m월d일 h:i' }}
+                                            </p>
+                                            {% if match.beforereview_match.all|find_user:request.user %}
+                                                <a class="btn" style="background-color:#b4b4b4; border:1px solid #b4b4b4; color:white; width:160px; font-size:14px; margin:5px 0 8px 14px;">작성하셨습니다</a>
+                                            {% else %}
+                                                <a href="{% url 'board_free:write_before' match_id=match.id %}" class="btn" style="background-color:#ba1626; border:1px solid #ba1626; color:white; width:160px; font-size:14px; margin:5px 0 8px 14px;">리뷰 작성</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% elif sort == 'after' %}
+                    <div class="row" style="margin:0; padding:0;">
+                        <div class="col-md-12" style="margin-top:30px; padding:0;">
+                            <div class="row" style="margin: 20px 10px 25px 10px;">
+                                <div class="col-md-12">
+                                    <a style="font-size:20px; font-weight:bold;">경기 후 게임</a>&nbsp;<a style="font-size:17px; color:#cc0033;">({{ after_game|length }})</a>
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 10px 10px 20px 0;">
+                                {% for match in after_game %}
+                                    <div class="col-md-3">
+                                        <div class="card card-block" style="width: 234px; margin-bottom:20px;  text-align:center;">
+                                            <div class="card-title" style="padding-top:10px;">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <img src="{{ match.home_team.team.photo.url }}" width="30"><a style="font-size:18px; color:#2d2d2d; padding-top:20px; margin-left:5px;">{{ match.home_team }}</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12" style="font-size:18px; color:#2d2d2d; margin-bottom:5px;">
+                                                        <a style="font-size:18px; color:#5c5c5c;">vs</a><br>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <img src="{{ match.away_team.team.photo.url }}" width="30"><a style="font-size:18px; color:#2d2d2d; padding-top:20px; margin-left:5px;">{{ match.away_team }}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="card-text" style="margin:0 0 10px 0; font-size:13px; color:#5c5c5c;">{{ match.home_team.team.stadium }}<br><b>{{ match.set_round }}</b><br>
+                                                {{ match.match_date|date:'m월d일 h:i' }}
+                                            </p>
+                                            {% if match.afterreview_match.all|find_user:request.user %}
+                                                <a class="btn" style="background-color:#b4b4b4; border:1px solid #b4b4b4; color:white; width:160px; font-size:14px; margin:5px 0 8px 14px;">작성하셨습니다</a>
+                                            {% else %}
+                                                <a href="{% url 'board_free:write_after' match_id=match.id %}" class="btn" style="background-color:#ba1626; border:1px solid #ba1626; color:white; width:160px; font-size:14px; margin:5px 0 8px 14px;">리뷰 작성</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% elif sort == 'player' %}
+                    <div class="row" style="margin:0; padding:0;">
+                        <div class="col-md-12" style="margin-top:30px; padding:0;">
+                            <div class="row" style="margin: 20px 30px 25px 30px;">
+                                <div class="col-md-12" style="text-align:center;">
+                                    <a style="font-size:20px; font-weight:bold;">리뷰할 선수를 선택해주세요</a>
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 10px 40px 20px 40px;">
+                                {% for player in player_review %}
+                                    <div style="width: 140px; margin:0 7px 13px 7px;">
+                                        <div class="card text-md-center">
+                                            <div class="card-block">
+                                                <img src="{{ player.name.photo.url }}" style="width:80px;">
+                                                <p style="font-size:13px;">{{ player.back_number }}. {{ player.name }}<br>({{ player.position }})</p>
+                                                <a href="{% url 'board_free:write_player' id=player.id %}" class="btn btn-primary" style="font-size:13px; color:white;">리뷰 작성</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row" style="margin-top:50px; height:290px;">
+                    <div class="col-md-12" style="font-size:13px;">
+                        <div style="background-color:#2d2d2d; padding-top:30px; height:140px; width:1020px; color:white; text-align:center;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">
+                                주의사항
+                            </div>
+                            <div style="text-align:center; color:#b4b4b4;">
+                                상대방에 대한 비방, 욕설, 행위등을 금지 합니다.
+                            </div>
+                            <div style="text-align:center; color:#b4b4b4;">
+                                무분별한 도배와 친목을 금지합니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

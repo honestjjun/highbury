@@ -1,0 +1,67 @@
+<div class="card review-card" style="height:100%;">
+    <div class="card-header" style="width:100%; border:1px solid #ba1626; background-color:#ba1626; height:125px;">
+        <table class="table" style="color:white; margin-top:10px;">
+            <tr>
+                <td style="border:none; text-align:right; vertical-align:middle; width:50px; padding:0;">
+                    <img class="rounded-circle" src="{{ game.home_team.team.photo.url }}" style="width:50px;">
+                </td>
+                <td style="border:none; text-align:center; vertical-align:middle; font-size:15px; width:20px; padding:0;">
+                    {{ game.home_score }}
+                </td>
+                <td style="border:none; text-align:center; vertical-align:middle; width:10px; font-size:12px; padding:0;">
+                    :
+                </td>
+                <td style="border:none; text-align:center; vertical-align:middle; font-size:15px; width:20px; padding:0;">
+                    {{ game.away_score }}
+                </td>
+                <td style="border:none; text-align:left; vertical-align:middle; width:50px; padding:0;">
+                    <img class="rounded-circle" src="{{ game.away_team.team.photo.url }}" style="width:50px;">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size:11px; border:none; text-align:center; color:#fca89e; padding:0;">
+                    {{ game.set_round }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size:11px; border:none; text-align:center; color:#faf9fc; padding:0;">
+                    {{ game.home_team.team.stadium }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-title" style="padding-top:10px;">
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11">
+                <span class="badge" style="float:left; font-weight:normal; font-size:11px; background-color:#ba1626;">경기 후 리뷰</span>
+                <a class="badge" href="{% url 'board_free:review_list' value="after" %}?id={{ review.after_game_review.id }}" style="float:right; font-size:11px; color:#a8a8a8; font-weight:normal;">경기 정렬</a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11" style="height:55px;">
+                {% if review.is_active == False %}
+                    <a href="" style="font-size:14px; color:#A4A4A4;">관리자에 의해 삭제된 게시물 입니다.</a>
+                {% else %}
+                    <a href="{% url 'board_free:detail' id=review.id slug=review.slug %}" style="font-size:14px; font-weight:bold;">{{ review.title|truncatechars:30 }}</a>
+                    {% if review.comments.all %}
+                        <a style="font-size:14px; color:#BA1626;">({{ review.comments.all|length }})</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11" style="font-size:12px; color:grey;">
+                <div style="float:left; margin-right:3px;">
+                    <img src="{{ review.user.photo.url }}" class="rounded-circle" style="width:15px;">
+                </div>
+                <div class="dropdown" style="float:left;">
+                    <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer;">{{ review.user.nickname }}</a>
+                    {% include 'function/user_profile_modal/menu_modal.jinja' with user=review.user %}
+                </div>
+                <div style="float:left; margin-left:6px;">
+                    | 추천<a style="color:#E23A3B; margin-left:6px;">{{ review.recommends.all|length }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

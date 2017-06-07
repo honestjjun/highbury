@@ -1,0 +1,102 @@
+{% extends 'base.jinja' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container">
+        <div class="row" style="border-bottom:1px solid #d5d5d5;">
+            <div class="col-md-3" style="margin: 50px 0 10px 80px;">
+                <a style="font-size: 25px; font-weight: bold;">선수 리뷰 작성</a>
+            </div>
+        </div>
+        <div class="row" style="margin: 30px 0 0 114px; height:170px;">
+            <div class="col-md-1" style="font-size:15px; font-weight:bold;">
+                <a>선수</a>
+            </div>
+            <div class="col-md-8" style="position:absolute; left:185px; top:124px;">
+                <div class="card text-md-center" style="padding:0; width:150px; height:180px;">
+                    <div class="card-block">
+                        <img src="{{ player.name.photo.url }}">
+                        <p style="font-size:14px;">{{ player.back_number }}. {{ player.name }}<br>({{ player.position }})</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    제목
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    {{ forms.title }}
+                </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    TAG
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    <input class="form-control" id="tags_id" type="text" name="tags" value="" style='width:600px; font-size:14px; height:36px; color:#4a4a4a;'>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 offset-md-2" style="font-size:12px; padding:3px 0 0 10px; color: grey;">
+                    복수의 tag를 입력하기 위해서는 단어 사이에 , 를 찍어 주세요
+                </div>
+            </div>
+            <div class="row" style="margin-left:89px;">
+                <div class="col-md-1" style="padding-top:25px; font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; margin-right:10px;">
+                    내용
+                </div>
+                <div class="col-md-9 review_match_body_form" style="padding:0;">
+                    {{ forms.body }}
+                </div>
+            </div>
+            <div class="row justify-content-center" style="padding-bottom:120px;">
+                <div class="col-md-2">
+                    <a class="btn summer_note" id="write-player-btn" type="submit" style="cursor:pointer; padding-top:12px; font-weight:bold; width:90px; height:42px; border:1px solid #2d2d2d; color:white; font-size:13px; background-color:#2d2d2d;">등 록</a>
+                    {# write free board modal #}
+                    <div class="modal" id="write-player-modal" tabindex="-1" role="dialog" style="top:30%;">
+                        <div class="modal-dialog" role="document" style="width:400px;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="padding-top:10px; padding-left:15px;">
+                                    <div class="row">
+                                        <div class="col-md-12" style="text-align:left; margin-bottom:5px; font-size:14px; color:#2d2d2d;">
+                                            현재 선수 리뷰 게시물을 등록하시겠습니까?
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                                    <input type="submit" href="" class="btn btn-secondary" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;" value="등 록">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+           $('#write-player-btn').on('click', function(e){
+               e.preventDefault();
+               $('#write-player-modal').modal({
+                   show:true,
+                   backdrop:'static',
+                   keyboard:false
+               })
+           })
+        });
+    </script>
+{% endblock domready %}
+
+
+

@@ -1,0 +1,93 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% load template_tags %}
+{% block advertise %}
+    <!-- 광고 영역 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 card" style="padding:0;">
+                {% sub_top_advertisements as top_advertisements %}
+                {% for advertisement in top_advertisements %}
+                    <a href="{{ advertisement.link }}">
+                        <img class="img-fluid" src="{{ advertisement.banner.url }}" style="width:100%; height:200px;">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock advertise %}
+{% block content %}
+    <div class="container">
+        <div class="row" style="margin-top:5px; margin-bottom:100px;">
+            <div class="col-lg-10 col-md-12">
+                {% block left_side %}
+                {% endblock left_side %}
+            </div>
+            <div class="col-lg-2 hidden-md-down" style="margin-top:70px;">
+                {# community_right 광고가 들어가는 부분 #}
+                <div class="row">
+                    <div class="col-md-12 card" style="padding:0;">
+                        {% community_right_advertisements as right_advertisements %}
+                        {% for advertisement in right_advertisements %}
+                            <a href="{{ advertisement.link }}">
+                                <img class="rounded d-block img-fluid" src="{{ advertisement.banner.url }}" style="width:200px; height:200px;">
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row" style="padding-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; border-bottom:1px solid #dadada; font-weight:bold;">
+                            <div class="col-md-12">
+                                최대 판매 상품
+                            </div>
+                        </div>
+                        {% max_product as max_product %}
+                        {% for product in max_product %}
+                            <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:13px; {% if not forloop.last %}border-bottom:1px solid #dadada;{% endif %}">
+                                <div class="col-md-12">
+                                    {{ forloop.counter }}. <a href="{{ product.get_absolute_url }}">{{ product.title }} ({{ product.category }})</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row" style="padding-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; border-bottom:1px solid #dadada; font-weight:bold;">
+                            <div class="col-md-12">
+                                인기 상품
+                            </div>
+                        </div>
+                        {% popular_product as popular_product %}
+                        {% for product in popular_product %}
+                            <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:13px; {% if not forloop.last %}border-bottom:1px solid #dadada;{% endif %}">
+                                <div class="col-md-12">
+                                    {{ forloop.counter }}. <a href="{{ product.get_absolute_url }}">{{ product.title }} ({{ product.category }})</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row" style="padding-top:10px;">
+                    <div class="col-md-12 card">
+                        <div class="row" style="text-align:center; padding:10px 0 7px 0; font-size:14px; font-weight:bold; border-bottom:1px solid #DADADA">
+                            <div class="col-md-12">
+                                인기 Tag
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="margin:5px 0 8px 0;">
+                                {% popular_tags as popular_tags %}
+                                {% for tag in popular_tags %}
+                                    <a class="btn" href="{% url 'search:search2' data=tag.0 %}" style="margin:1px 1px 1px 1px; font-size:12px; background-color:#2d2d2d; color:white; padding:3px 6px 3px 6px;">{{ tag.0 }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+

@@ -1,0 +1,33 @@
+{% extends 'main/profile/side_menu/profile_side_menu.jinja' %}
+{% block right_side %}
+    {% if paging.0 %}
+        <div style="background-color:white; padding:30px 0 10px 30px; font-size:18px; font-weight:bold;">
+            리뷰 게시판 쓴글
+        </div>
+        <table class="table" style="background-color:white; border-bottom:1px solid #d3d3d3;">
+            <tr style="font-size:13px;">
+                <th style="padding-left:20px; text-align:center; width:100px;">분류</th>
+                <th style="text-align:center;">제목</th>
+                <th style="text-align:center; width:115px;">날짜</th>
+                <th style="text-align:center; width:60px;">추천</th>
+                <th style="text-align:center; width:60px; padding-right:20px;">조회</th>
+            </tr>
+            {% for post in paging.0 %}
+                <tr style="font-size:14px;">
+                    <td style="font-size:13px; text-align:center; color:#ba1626;">{{ post.set_sort }}</td>
+                    <td><a href="{% url 'board_free:detail' id=post.id slug=post.slug %}">{{ post.title|truncatechars:30 }}</a></td>
+                    <td style="font-size:12px; color:#515151;">{{ post.created|date:'y.m.d [H:i]' }}</td>
+                    <td style="font-size:13px; text-align:center;">{{ post.recommend_num }}</td>
+                    <td style="font-size:13px; text-align:center;">{{ post.read }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div style="margin: 0 0 10px 0; text-align:center;">
+            {% include 'function/pagination.jinja' with comments=paging.0 prev=paging.1 nxt=paging.2 prevPage=paging.3 nxtPage=paging.4 blockRange=paging.5 %}
+        </div>
+    {% else %}
+        <div style="text-align:center; padding-top:300px; font-size:20px; font-weight:bold;">
+            유저가 작성한 리뷰가 없습니다.
+        </div>
+   {% endif %}
+{% endblock right_side %}

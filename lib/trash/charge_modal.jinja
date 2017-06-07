@@ -1,0 +1,42 @@
+{# 신고 창 #}
+<div class="modal" id="charge-modal" style="top:300px;" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width:500px;">
+        <div class="modal-content">
+            <form action="" method="post">
+                {% csrf_token %}
+                <input id="all-charge-sort" type="hidden" name="sort" value="">
+                <input id="all-charge-to" type="hidden" name="charge_to" value="">
+                <div class="modal-body">
+                    <div style="font-size:14px; font-weight:bold; color:#676767;">
+                        신고 대상 :
+                    </div>
+                    <div id="charge-modal-title" style="margin:0 0 10px 10px; color:#2d2d2d; font-size:15px; font-weight:bold;">안녕하세요 ㅎㅎㅎㅎㅎㅎㅎ</div>
+                    <div style="font-size:14px; font-weight:bold; color:#676767;">
+                        신고 이유 :
+                    </div>
+                    <select class="form-control" id="all-charge-reason" name="charge_reason" style="margin-bottom:10px; font-size:13px; color:#505050; height:36px;">
+                        <option value="0">욕설, 비방, 반말</option>
+                        <option value="1">지역 비하 발언</option>
+                        <option value="2">일베</option>
+                        <option value="9">기타</option>
+                    </select>
+                    {% comment %}
+                    <div id="etc-charge-reason" style="margin-bottom:10px;">
+                        <input class="form-control" type="text" value="기타" style="font-size:13px; height:34px; color:#404040;" readonly>
+                    </div>
+                    {% endcomment %}
+                    <div style="font-size:14px; font-weight:bold; color:#676767;">
+                        신고 상세 내용 :
+                    </div>
+                    <div>
+                        <textarea class="form-control" id="charge-content" type="text" name="content" value="" placeholder="신고 내용은 최소 10글자 이상 입력을 하셔야 합니다. 유저 창에서의 신고는 기타만 가능하며 다른 신고 이유를 원하실 경우 해당 메세지나 게시글에서 직접 신고를 해주시기 바랍니다." style="font-size:13px; color:#505050; height:150px;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; height:34px;" data-dismiss="modal">닫기</a>
+                    <a class="btn" id="all-charge-submit" data-dismiss="modal" style="cursor:pointer; font-size:12px; height:34px; background-color:#2d2d2d; color:white;">신 고</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

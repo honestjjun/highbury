@@ -1,0 +1,50 @@
+{% extends 'base.jinja' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center register-done">
+            <div class="col-md-10 banner-graphic">
+                <div class="row">
+                    <div class="col-md-3 a">
+                        <div>약관 동의</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 b">
+                        <div>이메일<br>확인</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 c">
+                        <div>회원 정보 입력</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 d">
+                        <div>가입 완료</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8 card" style="text-align:center; margin-bottom:150px;">
+                <div class="row justify-content-center">
+                    <div class="col-md-2">
+                        <img src="{{ arsenal.logo.url }}" style="text-align:center; width:90px; margin-top:30px;">
+                    </div>
+                </div>
+                <div style="padding:25px 0 12px 0; font-size:25px; font-weight:bold; color:#ba1626;">회원 가입 완료</div>
+                <div style="font-size:17px; padding-bottom:30px;"><a style="font-weight:bold; color:#ba1626;">Highbury</a>에 가입하신 것을 진심으로 축하드립니다.<br><br>
+                    많은 활동 부탁드리며, 청결한 사이트를 위해 욕설이나<br>
+                    비하 관련된 언어의 사용을 자제해주시기 바랍니다.<br><br>
+                    사이트의 개선점이나 추가하였으면 하는 기능들이나<br>
+                    문의사항이 있으시다면 '<a style="color:#ba1626; font-weight:bold;">honestjjune@gmail.com</a>'으로<br>
+                    메일을 보내주시면 됩니다.<br><br>
+                    <a style="font-size:20px; font-weight:bold">감사합니다.</a>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-5" style="padding-bottom:40px; text-align:center;">
+                        <a class="btn" href="{% url 'account:login' %}" style="background-color:#2d2d2d; padding-top:15px; color:white; width:240px; height:50px; font-weight:bold; font-size:15px;">로그인 화면으로 이동</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

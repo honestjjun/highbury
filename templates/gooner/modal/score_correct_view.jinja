@@ -1,0 +1,31 @@
+<div class="modal" id="score-correct-view" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="">
+            <div class="modal-header" style="font-size:18px; font-weight:bold;">
+                당첨자 전체 보기
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:5px;">
+                <div class="rounded">
+                    <div class="row">
+                        <div class="col-md-12" style="text-align:left; margin-bottom:5px; font-size:12px; color:#b7b7b7;">
+                            (본인일 경우 아이디에 색깔이 칠해지게 됩니다.)
+                        </div>
+                    </div>
+                    <div class="row">
+                        {% for user in event_result %}
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-12" style="padding-left:15px; text-align:left; margin-bottom:5px;">
+                                <img class="rounded-circle" src="{{ user.user.photo.url }}" style="width:23px;"><a style="padding-left:6px; font-size:12px; {% if user.user == request.user %}color:#BB00AE; font-weight:bold;{% else %}color:#3e3e3e;{% endif %} ">{{ user.user.nickname }}</a><br>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; height:34px;" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>

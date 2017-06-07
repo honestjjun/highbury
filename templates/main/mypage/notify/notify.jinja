@@ -1,0 +1,44 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% load custom_tags %}
+{% block right_side %}
+    <div class="row" style="padding-top:28px; margin:0; border-bottom:1px solid #ddd;">
+        <div class="col-md-6" style="padding:0 0 5px 15px; font-size:25px;">
+            알 림<span style="font-size:17px; color:#a5a5a5; margin-left:3px;">(<a style="color:#ba1626;">{{ notify_count|length }}</a>)</span>
+        </div>
+        <div class="col-md-6" style="padding-top:15px; text-align:right; font-size:13px; color:#919191;">
+            (알림은 7일간 본인 글 혹은 댓글에 달린 내용만 보여주게 됩니다.)
+        </div>
+    </div>
+    <div id="actions-list">
+        {% include 'main/mypage/notify/notify_ajax.jinja' %}
+    </div>
+    <div style="margin-top:30px;"></div>
+    {% if end_page != 1 %}
+        <div id="next-page-loading" data-value="{{ end_page }}" style="margin:0 auto; font-size:14px; font-weight:bold; color:grey; height:50px; line-height:46px; border-radius:5px; padding:0; vertical-align:middle; border:1px solid #ddd; width:600px; text-align:center; cursor:pointer;">다음 페이지 로딩</div>
+    {% endif %}
+{% endblock right_side %}
+{% block domready %}
+    <script>
+        var page = 1;
+        var empty_page = false;
+        $('#next-page-loading').on('click', function(e){
+            e.preventDefault();
+            var end_page = $(this).attr('data-value');
+            if (empty_page == true) {
+                alert('hi')
+            } else {
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '') {
+                        empty_page = true;
+                    } else {
+                        if (end_page == page) {
+                            $('#next-page-loading').css('display', 'none');
+                        }
+                        $('#actions-list').append(data);
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock domready %}

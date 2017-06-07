@@ -1,0 +1,48 @@
+{# 확인 메세지 알림창 #}
+<div class="modal" id="write-message" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                <div class="row">
+                    <div class="col-md-12" id="write-message-content" style="text-align:left; margin:10px 0 5px 0; font-size:14px; color:#2d2d2d;">
+                        메세지
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn" id="result-ok-btn" style="cursor:pointer; background-color:white; border:1px solid #c1c1c1; font-size:12px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# 선택 메세지 알림창 #}
+<div class="modal" id="select-message" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                <div class="row">
+                    <div class="col-md-12" id="select-message-content" style="text-align:left; margin:10px 0 5px 0; font-size:14px; color:#2d2d2d;">
+                        메세지
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn btn-secondary" style="font-size:12px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫 기</a>
+                <a class="btn" id="select-message-confirm-btn" href="" style="cursor:pointer; border:1px solid #2d2d2d; font-size:12px; background-color:#2d2d2d; height:34px; color:white;">확 인</a>
+            </div>
+        </div>
+    </div>
+</div>

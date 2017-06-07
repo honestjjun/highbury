@@ -1,0 +1,49 @@
+<form action="{% url 'arsenal:vote' %}#vote_result" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="value" value="score">
+    <!--  다음 회차 스코어 맞추기 폼  -->
+    <table class="table" style="padding:0;">
+        <tr>
+            <td style="border:none; text-align:right; width:100px; vertical-align:middle; padding:0 5px 0 0; font-size:15px; font-weight:bold; color:#545454;">
+                {{ next_match.home_team }}
+            </td>
+            <td style="border:none; padding:0; width:50px;"><img src="{{ next_match.home_team.team.photo.url }}" style="text-align:right; width:45px;"></td>
+            <td style="border:none; vertical-align:middle; font-size:18px; padding:0; text-align:center; color:#747474; width:50px;">vs</td>
+            <td style="border:none; padding:0; width:50px;"><img src="{{ next_match.away_team.team.photo.url }}" style="text-align:left; width:45px;"></td>
+            <td style="border:none; text-align:left; width:100px; vertical-align:middle; padding:0 0 0 5px; font-size:15px; font-weight:bold; color:#545454;">
+                {{ next_match.away_team }}
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="2" style="border:none; padding:0;">
+                <input class="form-control" id="home-score" type="text" name="home_score" style="text-align:right; float:right; width:90px; font-size:12px; color:#555555; height:30px;" value="0">
+            </td>
+            <td colspan="3" style="border:none; text-align:center; padding:2px 0 0 0; font-size:13px; color:#777777;">
+                {{ next_match.home_team.team.stadium }}
+            </td>
+            <td rowspan="2" style="border:none; padding:0;">
+                <input class="form-control" id="away-score" type="text" name="away_score" style="float:left; width:90px; font-size:12px; color:#737373; height:30px;" value="0">
+
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="border:none; text-align:center; padding:0; font-size:13px; color:#5b5b5b;">
+                {{ next_match.set_round }}
+            </td>
+        </tr>
+        <tr>
+            <td style="border:none; padding:0;">
+                <label for="home-score" style="float:right; font-size:13px;">홈 스코어</label>
+            </td>
+            <td colspan="3" style="border:none; text-align:center; padding:0; font-size:13px; color:#737373;">
+                {{ next_match.match_date|date:'m월d일 h:i' }}
+            </td>
+            <td style="border:none; padding:0;">
+                <label for="away-score" style="float:left; font-size:13px;">원정 스코어</label>
+            </td>
+        </tr>
+    </table>
+    <a class="btn btn-secondary" data-toggle="modal" data-target="#score-event" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:14px; width:100px;">vote</a>
+    <!--  스코어 이벤트 등록 modal  -->
+    {% include 'gooner/modal/score_event.jinja' %}
+</form>

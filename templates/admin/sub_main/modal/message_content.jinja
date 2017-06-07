@@ -1,0 +1,30 @@
+{# 쪽지 내용 modal #}
+<div class="modal" id="modal-message-content{{ forloop.counter }}" tabindex="-1" role="dialog" style="top:300px;">
+    <div class="modal-dialog" role="document" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">쪽지</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="message-take-user" style="font-size:13px; color:#2d2d2d;">보낸 사람</label>
+                        <input class="form-control" id="message-take-user" value="{{ content.send_user }}" style="background-color:#f9f9f9; font-size:13px;" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="take-user-message" style="font-size:13px; color:#2d2d2d; margin-top:10px;">메세지</label>
+                        <textarea class="form-control" id="take-user-message" cols="25" readonly="readonly" style="background-color:#f9f9f9; font-size:13px; height:200px;">{{ content.message }}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+            </div>
+        </div>
+    </div>
+</div>

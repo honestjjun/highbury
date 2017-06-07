@@ -1,0 +1,41 @@
+<div class="card review-card" style="height:100%;">
+    <img class="card-img-top" src="{{ review.player_review.name.review_photo.url }}" style="height:125px;">
+    <div class="card-img-overlay" style="font-size:12px; font-weight:bold; color:white; padding:10px 0 0 15px;">
+        {{ review.player_review.back_number }}. {{ review.player_review.position }}<br>
+        {{ review.player_review.name }}
+    </div>
+    <div class="card-title" style="padding-top:10px;">
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11">
+                <span class="badge" style="float:left; font-weight:normal; font-size:11px; background-color:#ba1626;">선수 리뷰</span>
+                <a class="badge" href="{% url 'board_free:review_list' value="player" %}?id={{ review.player_review.id }}" style="float:right; font-size:11px; color:#a8a8a8; font-weight:normal;">선수 정렬</a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11" style="height:55px;">
+                {% if review.is_active == False %}
+                    <a href="" style="font-size:14px; color:#A4A4A4;">관리자에 의해 삭제된 게시물 입니다.</a>
+                {% else %}
+                    <a href="{% url 'board_free:detail' id=review.id slug=review.slug %}" style="font-size:14px; font-weight:bold;">{{ review.title|truncatechars:30 }}</a>
+                    {% if review.comments.all %}
+                        <a style="font-size:14px; color:#BA1626;">({{ review.comments.all|length }})</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-11 col-11" style="font-size:12px; color:grey;">
+                <div style="float:left; margin-right:3px;">
+                    <img src="{{ review.user.photo.url }}" class="rounded-circle" style="width:15px;">
+                </div>
+                <div class="dropdown" style="float:left;">
+                    <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer;">{{ review.user.nickname }}</a>
+                    {% include 'function/user_profile_modal/menu_modal.jinja' with user=review.user %}
+                </div>
+                <div style="float:left; margin-left:6px;">
+                    | 추천<a style="color:#E23A3B; margin-left:6px;">{{ review.recommends.all|length }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

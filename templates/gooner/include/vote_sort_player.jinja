@@ -1,0 +1,30 @@
+{% if player %}
+    {% if forloop.counter == 11 %}
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-6" style="padding:5px 0 5px 0">
+                    <img src="{{ player.name.photo.url }}" style="float:left; width:50px; border-radius:50%;">
+                    <select class="form-control select-point" name="player{{ forloop.counter }}_point" style="float:left; width:65%; margin:10px 0 0 5px; padding:0; font-size:12px; height:30px; border:1px solid #999999; color:#4a4a4a;" value="">
+                       {% for a in "0123456789" %}
+                            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-sm-6" style="padding:5px 0 5px 0">
+            <img src="{{ player.name.photo.url }}" style="float:left; width:50px; border-radius:50%;">
+            <select class="form-control" name="player{{ forloop.counter }}_point" style="float:left; width:65%; margin:10px 0 0 5px; padding:0; font-size:12px; height:30px; border:1px solid #999999; color:#4a4a4a;" value="">
+               {% for a in "0123456789" %}
+                   <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+               {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="col-sm-6" style="padding:5px 0 5px 0">
+        <img src="http://127.0.0.1:8000/media/default/default.png" style="border:1px solid #999999; width:50px; border-radius:50%;">
+        <a style="color:grey; font-size:14px;">교체 없음</a>
+    </div>
+{% endif %}

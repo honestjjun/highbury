@@ -1,0 +1,87 @@
+{% extends 'base.jinja' %}
+{# block advertise #}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="carousel slide" data-ride="carousel" id="carouselExampleIndicators">
+                    <ol class="carousel-indicators">
+                        {% for advertiser in profile_top_avertisements %}
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" {% if forloop.first %}class="active"{% endif %}></li>
+                        {% endfor %}
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        {% for advertiser in profile_top_advertisements %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <a href="{{ advertiser.link }}">
+                                    <img class="d-block img-fluid" src="{{ advertiser.banner.url }}">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{# endblock advertise #}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center profile-page" style="margin:0">
+            <div class="col-md-2" style="border-left:1px solid #ddd; padding-bottom:200px; border-right:1px solid #ddd; text-align:center;">
+                <div class="row justify-content-center" style="margin:0 2px 0 2px; border-bottom:1px solid #ddd;">
+                    <div class="col-md-12" style="margin:50px 0 15px 0; font-size:14px;">
+                        <a href="{% url 'account:profile' user=request.user %}" target="_blank">내 프로필 보기</a>
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="margin:0 2px 0 2px; border-bottom:1px solid #ddd;">
+                    <div class="col-md-12" style="margin:15px 0 15px 0; font-size:14px;">
+                        <div style="font-weight:bold; color:grey;">
+                            유저
+                        </div>
+                        <div style="margin:5px 0 3px 0; {% if select == 'my_info' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'account:mypage' %}">내 정보</a>
+                        </div>
+                        <div style="{% if select == 'notify' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'account:notify' %}">알림</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="margin:0 2px 0 2px; border-bottom:1px solid #ddd;">
+                    <div class="col-md-12" style="margin:15px 0 15px 0; font-size:14px;">
+                        <div style="font-weight:bold; color:grey;">
+                            포인트
+                        </div>
+                        <div style="margin:5px 0 3px 0; {% if select == 'point' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'account:point' %}">내 포인트</a>
+                        </div>
+                        <div style="{% if select == 'user_point' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'account:use_point' %}">포인트 사용 내역</a>
+                        </div>
+                        <div style="margin-top:3px; {% if select == 'achievement' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'account:achievement' sort=1 %}">업적</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="margin:0 2px 0 2px; border-bottom:1px solid #ddd;">
+                    <div class="col-md-12" style="margin:15px 0 15px 0; font-size:14px;">
+                        <div style="font-weight:bold; color:grey;">
+                            쪽지
+                        </div>
+                        <div style="margin:5px 0 3px 0; {% if select == 'take_message_box' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'message:take_message_box' %}">받은 쪽지함</a>
+                        </div>
+                        <div style="{% if select == 'send_message_box' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'message:send_message_box' %}">보낸 쪽지함</a>
+                        </div>
+                        <div style="margin-top:3px; {% if select == 'send_message' %}color:#ba1626; font-weight:bold;{% endif %}">
+                            <a href="{% url 'message:send_message' %}">쪽지 쓰기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-10">
+                {% block right_side %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

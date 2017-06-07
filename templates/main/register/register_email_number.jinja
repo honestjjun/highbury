@@ -1,0 +1,90 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container email-confirm-page">
+        <div class="row justify-content-center register-banner">
+            <div class="col-md-10 banner-graphic">
+                <div class="row">
+                    <div class="col-md-3 a">
+                        <div>약관 동의</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 b">
+                        <div>이메일<br>확인</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 c">
+                        <div>회원 정보 입력</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 d">
+                        <div>가입 완료</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center email-title">
+            <div class="col-md-9 card" style="height:210px; margin-bottom:200px;">
+                <div class="row justify-content-center">
+                    <div class="col-md-6" style="text-align:center; margin-top:30px; font-size:13px; color:#5e5e5e; font-weight:bold;">
+                        인증 메일이 발송되었습니다.
+                    </div>
+                </div>
+                <form action="{% url 'account:register' email_barcode=email.barcode %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_email" value="{{ email }}">
+                    <div class="row" style="margin-top:20px;">
+                        <div class="col-md-3">
+                            <label for="input-number" style="font-weight:bold; padding-top:8px; float:right; color:#565656;">E-mail</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-control" type="text" id="input-number" name="input-number" style="font-size:13px; color:#565656; height:36px;">
+                        </div>
+                        <div class="col-md-3">
+                            <a href="" class="btn number-confirm-btn" data-value="{{ random_number }}" style="background-color:white; color:#606060; border:1px solid #d6d6d6; padding-top:10px; font-size:12px; height:36px; font-weight:bold;">인증 번호 확인</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3" id="number-confirm-message" style="font-size:12px; color:grey;">
+                            인증 번호 입력 후 인증 번호 확인을 해주시기 바랍니다.
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6" style="margin:10px 0 0 160px;">
+                            <a class="btn btn-secondary" href="{% url 'account:register_email' %}" style="font-size:13px;">메일 다시 입력</a>
+                            <input class="btn" id="register-next-btn" type="button" value="회원 가입하기" data-value="false" onclick="hm(this)" style="width:150px; font-size:13px; background-color:#2d2d2d; color:white;">
+                        </div>
+                    </div>
+                </form>
+                <div style="font-size:14px; color:#3b3b3b; padding:10px 10px 10px 10px"></div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block domready %}
+    <script>
+        function hm(value){
+           var data = value.getAttribute('data-value');
+           var text = document.getElementById('number-confirm-message');
+           if (data == 'false'){
+               text.innerHTML = '인증 번호 확인을 먼저 해주시기 바랍니다.';
+               text.style.cssText = 'color:#1f2edc; font-size:12px;'
+           }
+        }
+        $(document).ready(function(){
+            $('.number-confirm-btn').on('click', function(e){
+                e.preventDefault();
+                var number_confirm = document.getElementById('number-confirm-message');
+                var random_number = $(this).data('value');
+                var user_input = $('#input-number').val();
+                if (random_number == user_input) {
+                    number_confirm.innerHTML = '인증이 완료 되었습니다. 회원 가입 버튼을 눌러주세요.';
+                    number_confirm.style.cssText = 'font-size:12px; color:#ba1626;';
+                    $('#register-next-btn').attr('type', 'submit')
+                } else {
+                    number_confirm.innerHTML = '인증 번호가 틀렸습니다. 다시 입력 부탁드립니다.';
+                    number_confirm.style.cssText = 'font-size:12px; color:#1f2edc;'
+                }
+
+        })});
+    </script>
+{% endblock domready %}

@@ -1,0 +1,55 @@
+{% extends 'base.jinja' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 card" style="margin:80px 0 150px 0;">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div style=" text-align:center; padding:25px 0 12px 0; font-size:25px; font-weight:bold; margin:20px 0 15px 0; color:#ba1626;">Highbury Login</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 offset-md-1" style="text-align:right; font-size:14px; padding-top:7px; font-weight:bold; color:#2d2d2d;">
+                            E-mail
+                        </div>
+                        <div class="col-md-8">
+                            {{ forms.email }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:30px;">
+                        <div class="col-md-2 offset-md-1" style="text-align:right; font-size:14px; padding-top:7px; font-weight:bold; color:#2d2d2d;">
+                            Password
+                        </div>
+                        <div class="col-md-8">
+                            {{ forms.password }}
+                        </div>
+                    </div>
+                    <div class="row" style="margin:5px 0 0 0;">
+                        <div class="col-md-6 offset-md-6">
+                            <span style="font-size:13px; color:#515151; padding-left:45px;">
+                                <a href="{% url 'account:register_terms' %}" style="padding-right:5px;">회원 가입</a>
+                                <a href="{% url 'account:password_email' %}">비밀번호 찾기</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row" style="margin:5px 0 0 0;">
+                        <div class="col-md-6 offset-md-6">
+                            <span style="font-size:13px; color:#515151; padding-left:45px;">
+                                <a href="{% url 'account:register_terms' %}" style="padding-right:5px;">회원 가입</a>
+                                <a href="{% url 'account:password_email' %}">비밀번호 찾기</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" style="margin:20px 0 40px 0;">
+                        <div class="col-md-2">
+                            <input class="btn" type="submit" style="background-color:#2d2d2d; color:white; font-size:13px; width:90px; height:36px;" value="Log in">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

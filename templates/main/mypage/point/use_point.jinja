@@ -1,0 +1,50 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% load custom_tags %}
+{% block right_side %}
+    <div class="row" style="margin-top:28px;">
+        <div class="col-md-6" style="padding:0 0 5px 25px; font-size:25px;">
+            포인트 사용 내역
+        </div>
+        <div class="col-md-6" style="text-align:right; padding:18px 25px 0 0; font-size:12px; color:grey;">
+            현재 유저는 <a style="color:#ba1626; font-weight:bold;">{{ len_products }}</a>개의 포인트 구매를 하였습니다.
+        </div>
+    </div>
+    <table class="table" style="margin-bottom:0;">
+        <tr style="font-size:13px;">
+            <th style="text-align:center; width:140px;">주문 번호</th>
+            <th style="text-align:center; width:85px;">상품 사진</th>
+            <th style="text-align:center;">제목</th>
+            <th style="text-align:center; width:90px;">포인트</th>
+            <th style="text-align:center; width:90px;">만족도</th>
+            <th style="text-align:center; width:120px;">구입 날짜</th>
+        </tr>
+        {% for product in products %}
+            <tr style="font-size:14px; {% if forloop.last %}border-bottom:1px solid #eeeeee;{% endif %}">
+                <td style="text-align:center; vertical-align:middle; font-size:12px; color:#2d2d2d;">{{ product.order_number }}</td>
+                <td><img src="{{ product.product.image.url }}" style="border-radius:3px; width:80px;"></td>
+                <td style="vertical-align:middle; font-weight:bold;"><a href="{{ product.product.get_absolute_url }}">{{ product.product.title|truncatechars:40 }}</a></td>
+                <td style="vertical-align:middle; text-align:center;">{{ product.product.point }} 점</td>
+                <td style="vertical-align:middle; text-align:center;">
+                    {% if product.product|is_satisfaction:request.user %}
+                        <a style="color:#ba1626;">{{ product.product|is_satisfaction:request.user }} / 5점</a>
+                    {% else %}
+                        <a style="color:grey; font-size:13px;">작성 안함</a>
+                    {% endif %}
+                </td>
+                <td style="vertical-align:middle; text-align:center; font-size:13px;">{{ product.buy_date|date:'y.m.d [H:i]' }}</td>
+            </tr>
+        {% empty %}
+            <tr style="border-bottom:1px solid #eeeeee;">
+                <td colspan="6" style="font-size:13px; font-weight:bold; text-align:center; color:grey;">포인트로 구매한 내역이 없습니다.</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="row" style="text-align:right; padding-top:5px;  margin:0 0 20px 0;">
+        <div class="col-md-12" style="font-size:12px; color:grey;">
+            구매해주셔서 감사합니다.
+        </div>
+    </div>
+    <div style="margin: 0 0 150px 0;">
+        {% include 'function/pagination.jinja' with comments=products blockRange=blockRange prev=prev nxt=nxt prevPage=prevPage nxtPage=nxtPage %}
+    </div>
+{% endblock right_side %}

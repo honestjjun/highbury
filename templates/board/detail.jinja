@@ -1,0 +1,428 @@
+{% extends 'board/side_menu/board_side_menu.jinja' %}
+{% load staticfiles %}
+{% load custom_tags %}
+{% load widget_tweaks %}
+{% block left_side %}
+    <div class="row">
+        <div class="col-sm-4" style="padding:30px 0 0 30px; font-size:14px;">
+            <a href="{% url "board_free:list" %}">자유 게시판</a>
+        </div>
+        <div class="col-sm-8 hidden-xs-down" style="text-align:right; padding:38px 20px 0 0; font-size:11px;">
+            <a href="{% url "board_free:list" %}">목록으로</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="font-size:20px; font-weight:bold; padding-left:30px; margin-top:10px; padding-bottom:5px; border-bottom:1px solid #ddd;">
+            {{ post.title }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="font-size:13px; color:grey; padding:10px 0 30px 30px;">
+            <div style="float:left;">작성자 : <img class="rounded-circle" src="{{ post.user.photo.url }}" style="width:16px; margin-right:2px;"></div>
+            <div class="dropdown" style="float:left;">
+                <div class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer; float:left; margin-right:5px;">{{ post.user }}</div>
+                {% include 'function/user_profile_modal/menu_modal.jinja' with user=post.user %}
+            </div>
+            <div style="float:left;">
+                | 조회수 : {{ post.read }} | 추천 수 : <a id="board-recommend-count">{{ post.recommends.all|length }}</a> | 등록 일 : {{ post.created|date:'Y.m.d H:i' }}
+            </div>
+        </div>
+    </div>
+
+    <!--  선수 리뷰 일 경우  -->
+    {% if post.sort == 'player' %}
+        <div class="row justify-content-center">
+            {% include 'function/strategy/match_review/player.jinja' with player=post.player_review %}
+        </div>
+        <div class="row" style="font-size:14px;">
+            <a style="margin:10px 30px 20px 30px;">{{ post.body|safe }}</a>
+        </div>
+    <!--  경기 프리뷰 일 경우  -->
+    {% elif post.sort == 'before' %}
+        <div class="row justify-content-center">
+            {% include 'function/strategy/match_review/before.jinja' with before=post.before_game_review %}
+        </div>
+        <div class="row" style="margin-top:20px;">
+            {% include 'board/include/review_detail/before.jinja' with strategy=post_before.0.strategy player1=post_before.1.player player2=post_before.2.player player3=post_before.3.player player4=post_before.4.player player5=post_before.5.player player6=post_before.6.player player7=post_before.7.player player8=post_before.8.player player9=post_before.9.player player10=post_before.10.player player11=post_before.11.player result=False is_value=False %}
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4 card" style="text-align:center; margin: 15px 0 25px 0;">
+                <a style="font-size:14px; font-weight:bold; color:#727370; margin-top:10px;">유저가 선택한 Position</a>
+                <a style="font-size:15px; font-weight:bold; color:#BA1626; margin:7px 0 10px 0;">{{ post_before.0.strategy|modify_strategy }}</a>
+            </div>
+        </div>
+        <div class="row" style="font-size:14px;">
+            <a style="padding:10px 30px 20px 30px;">{{ post.body|safe }}</a>
+        </div>
+    <!--  경기 후 리뷰 페이지  -->
+    {% elif post.sort == 'after' %}
+        <div class="row justify-content-center">
+            {% include 'function/strategy/match_review/after.jinja' with after=post.after_game_review %}
+        </div>
+        <div class="row" style="margin-bottom:50px;">
+            {% include 'board/include/review_detail/after.jinja' with post=post post_after=post_after arsenal='Arsenal'|find_team %}
+        </div>
+    <!--  일반 자유 게시판 페이지  -->
+    {% else %}
+        <div class="row" style="font-size:14px;">
+            <a style="padding:10px 30px 20px 30px;">{{ post.body|safe }}</a>
+        </div>
+    {% endif %}
+
+    <!-- 본인 글이 아닐 경우 추천 버튼 생성 -->
+    {% if post.user != request.user and request.user.is_authenticated %}
+        <div class="row justify-content-center" style="margin-bottom:20px; text-align:center;">
+            <div class="col-md-2">
+                <a class="btn btn-secondary" id="board-detail-recommend" href="{% url 'board_free:article_recommend' id=post.id slug=post.slug %}"
+                    data-action="{% if post.recommends.all|find_user:request.user %}비{% endif %}추천">
+                    {% if post.recommends.all|find_user:request.user %}
+                        비추천
+                    {% else %}
+                        추 천
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- tag 부분 -->
+    <div class="row">
+        <div class="col-md-12" style="padding:10px 0 10px 30px;">
+            <a style="font-size:15px; color: #a3a3a3; font-weight:bold; margin: 0 5px 0 0;">TAGS</a>
+            {% if post.tags.all %}
+                {% for tag in post.tags.all %}
+                    <kbd class="bg-primary" style="border:1px solid #457eff; padding:2px 3px 2px 3px;">#<a href="{% url 'search:search2' data=tag.tag %}" style="color:#ffffff; font-size:11px;">{{ tag.tag }}</a></kbd>
+                    {% if forloop.last %}{% else %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!--  유저 본인 일 경우 "수정, 삭제" 아닐 경우 "신고" -->
+    <div class="row" style="padding-left:30px;">
+        <div class="col-md-12" style="padding:0 0 10px 0; font-size:14px;">
+            {% if request.user.is_authenticated %}
+                {% if post.user == request.user %}
+                    <a href="{% url 'board_free:change' id=post.id slug=post.slug sort=post.sort %}" style="margin-right:5px;">수정</a>
+                    <a id="post-delete-btn" data-href="{% url 'board_free:article_delete' id=post.id slug=post.slug %}" style="cursor:pointer;">삭제</a>
+                {% else %}
+                    <a id="free-charge-modal" data-id="{{ post.id }}" data-value="{{ post.title|truncatechars:37 }}" style="cursor:pointer;">신고</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 댓글 남기기 -->
+    <div class="row" style="background-color:#f7f7f7; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+        <div class="col-md-12" style="padding:20px 30px 15px 30px;">
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'board_free:detail' id=post.id slug=post.slug %}#results" method="post">
+                    {% csrf_token %}
+                    <textarea rows="5" name="content" class="form-control" style="font-size:14px; color:#555555;"></textarea>
+                    <input type="submit" value="댓글" class="btn btn-danger" style="float:right; margin-top: 10px; width:80px; border:1px solid #ba1626; background-color:#BA1626; font-size:14px;">
+                </form>
+            {% else %}
+                <textarea rows="5" class="form-control" style="font-size:14px; background-color:#f3f3f3; color:#555555;" placeholder="로그인 후에 댓글 입력이 가능합니다." readonly></textarea>
+                <a class="btn btn-danger" style="float:right; margin-top: 10px; width:80px; border:1px solid #ba1626; background-color:#BA1626; font-size:14px;">댓글</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!--  댓글 (댓글 숫자)  -->
+    <div class="row" id="results">
+        <div class="col-md-12" style="font-size:16px; font-weight:bold; padding:20px 0 7px 30px; border-bottom:1px solid #ddd;">
+            댓글 {% if post.comments.all %}(<a style="color:#e5264f">{{ post.comments.all|length }}</a>){% endif %}
+        </div>
+    </div>
+
+    <!--  댓글 부분  -->
+    {% for comment in paging.0 %}
+        <div class="row commentBox">
+            <div class="col-md-12" style="border-bottom:1px solid #ddd;">
+                {% if not comment.is_active %}
+                    <div class="row">
+                        <div class="col-md-12" style="color:#a4a4a4; font-size:14px; padding: 15px 10px 15px 30px;">
+                            관리자에 의해 삭제된 댓글입니다.
+                        </div>
+                    </div>
+                {% elif comment.is_delete %}
+                    <div class="row" style="color:#a4a4a4; font-size:14px; padding: 15px 10px 15px 30px;">
+                        <div class="col-md-12">
+                            사용자에 의해 삭제된 댓글입니다.
+                        </div>
+                    </div>
+                {% else %}
+                    <!--  일반 댓글 일 경우 대댓글일 경우 { if comment.comment } 가 들어감 -->
+                    <div class="row">
+                        <div class="col-md-12" style="padding: 10px 10px 4px 30px;">
+                            {% if comment.comment %}
+                                <div style="float:left; color:#aeaeae; margin-right:7px;">-</div>
+                            {% endif %}
+                            <div style="float:left; margin-right:5px;">
+                                <img class="rounded-circle" src="{{ comment.user.photo.url }}" style="width:16px;">
+                            </div>
+                            <div class="dropdown" style="float:left; font-size:14px; padding-top:0; margin-right:5px; font-weight:bold;">
+                                <div class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer; float:left;">{{ comment.user.nickname }}</div>
+                                {% include 'function/user_profile_modal/menu_modal.jinja' with user=comment.user %}
+                            </div>
+                            <div style="float:left; font-size:13px; color:#bfbfbf; margin-right:4px;">|</div>
+                            <div style="float:left; font-size:13px; color:#bfbfbf;">{{ comment.created|date:'y.m.d. H:i' }}</div>
+                            {% if request.user.is_authenticated %}
+                                <div style="float:right; padding-right:10px; font-size:13px; color:#a3a3a3;">
+                                    <a class="reply" data-id="commentReply" href="" style="margin-right:2px;">답글</a>
+                                    {% if comment.user == request.user %}
+                                        <a class="comment-delete-button" data-href="{% url 'board_free:comment_delete' id=post.id slug=post.slug comment_id=comment.id %}#results" style="cursor:pointer;">삭제</a>
+                                    {% else %}
+                                        <a class="comment-charge-modal" data-id="{{ comment.id }}" data-value="{{ comment.content|truncatechars:37 }}" style="cursor:pointer;">신고</a><br>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="padding: 0 10px 10px 30px; font-size:14px; color:#242424;">
+                            {% if comment.comment %}
+                                <a style="color: #dd0b21; padding-left:15px; margin-right: 5px;">{{ comment.commenting_user }}</a>
+                            {% endif %}
+                            {{ comment.content }}
+                        </div>
+                    </div>
+                    <!--  comment 의 숨겨진 댓글 창  -->
+                    {% include 'board/include/comment_reply.jinja' with comment=comment %}
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="row">
+            <div class="col-md-12" style="font-size:15px; padding: 10px 0 10px 30px; border-bottom:1px solid #ddd; color:#8d8d8d;">
+                댓글이 존재하지 않습니다.
+            </div>
+        </div>
+    {% endfor %}
+    <div style="margin: 20px 0 50px 0;">
+        {% include 'function/pagination.jinja' with comments=paging.0 prev=paging.1 nxt=paging.2 prevPage=paging.3 nxtPage=paging.4 blockRange=paging.5 %}
+    </div>
+
+    {# 알림창 #}
+    {% include 'function/message_modal/alert_message.jinja' %}
+    {% include 'function/message_modal/charge_modal.jinja' %}
+
+{% endblock left_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function() {
+            var write_notice = $('#write-message');
+            var content = $('#write-message-content');
+            var message_take_user = $('#message-take-user');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                message_take_user.attr('value', $(this).attr('data-value'));
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            {# 메세지 보내기 #}
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'message:message_ajax' %}',
+                    data: {
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            write_notice.modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+            var charge_modal = $('#charge-modal');
+            var all = $('#all-charge-reason');
+            var etc = $('#etc-charge-reason');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                all.attr('style', 'display:none;');
+                etc.attr('style', 'display:show; margin-bottom:10px;');
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# post 신고 버튼을 클릭하게 되었을 때 #}
+            $('#free-charge-modal').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'free');
+                charge_to.attr('value', $(this).attr('data-id'));
+                all.attr('style', 'display:show; margin-bottom:10px; font-size:13px; color:#505050; height:36px;');
+                etc.attr('style', 'display:none;');
+                charge_modal.modal({
+                    show:true,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                charge_modal_title.text($(this).attr('data-value'));
+            });
+
+            {# comment 신고 버튼을 클릭하게 되었을 때 #}
+            $('.comment-charge-modal').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'comment');
+                charge_to.attr('value', $(this).attr('data-id'));
+                all.attr('style', 'display:show; margin-bottom:10px; font-size:13px; color:#505050; height:36px;');
+                etc.attr('style', 'display:none;');
+                charge_modal.modal({
+                    show:true,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                charge_modal_title.text($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                if (charge_sort.attr('value') == 'etc'){
+                    var charge_reason = $('#user-charge-reason');
+                } else {
+                    var charge_reason = $('#all-charge-reason');
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            write_notice.modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+
+            var select_content = $('#select-message-content');
+            var select_notice = $('#select-message');
+            var select_confirm_btn = $('#select-message-confirm-btn');
+
+            {# 게시글 삭제 버튼 클릭 시 #}
+            $('#post-delete-btn').on('click', function(e){
+                e.preventDefault();
+                var href = $(this).attr('data-href');
+                select_content.html('현재 게시글을 삭제하시겠습니까?<br>삭제된 글은 복구할 수 없습니다.');
+                select_confirm_btn.attr('href', href);
+                select_notice.modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+            });
+
+            {# 댓글 삭제 버튼 클릭 시 #}
+            $('.comment-delete-button').on('click', function(e){
+                e.preventDefault();
+                var href = $(this).attr('data-href');
+                select_content.html('현재 댓글을 삭제하시겠습니까?');
+                select_confirm_btn.attr('href', href);
+                select_notice.modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+            });
+
+            {# 각 답글을 클릭하게 되었을 때 해당 댓글의 아래에 입력창이 뜨게 됨 #}
+            $('.reply').on('click', function(e) {
+                e.preventDefault();
+                var $commentBox = $('.commentBox');
+                var $parent_box = $(this).closest('.commentBox');
+                $commentBox.not($parent_box).find('.reply').text('답글');
+                $commentBox.not($parent_box).find('.showHideForm').hide();
+                $parent_box.find('.showHideForm').toggle();
+                if($(this).is(':contains("답글 취소")')){
+                    $(this).text('답글');
+                }else{
+                    $(this).text('답글 취소');
+                }
+            });
+
+            {# 게시글의 추천 제도 클릭 시 #}
+            $('#board-detail-recommend').on('click', function(e){
+                e.preventDefault();
+                $.post($(this).attr('href'),
+                    {
+                        action:$(this).attr('data-action')
+                    },
+                    function(data){
+                        if(data['status']=='ok'){
+                            var recommend_button = $('#board-detail-recommend');
+                            var recommend_action = recommend_button.attr('data-action');
+                            recommend_button.attr('data-action', recommend_action=='추천'?'비추천':'추천');
+                            recommend_button.text(recommend_action=='추천'?'비추천':'추천');
+                            var detail_count = $('#board-recommend-count');
+                            var recommend_count = parseInt(detail_count.text());
+                            detail_count.text(recommend_action=='추천'?recommend_count+1:recommend_count-1);
+                        }
+                    }
+                )
+            });
+        });
+    </script>
+{% endblock domready %}
+
+

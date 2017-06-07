@@ -1,0 +1,554 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <div class="container card">
+        <div class="row" style="padding:0;">
+            <div class="col-md-12">
+                <div id="gooner_simple_point"></div>
+                <div class="row" style="border-bottom:1px solid #ddd; margin:50px 0 0 0; padding:0 0 50px 0;">
+                    <div class="col-md-12" style="padding:0; margin:0;">
+                        <div class="row justify-content-center">
+                            <div class="col-md-6" style="font-size:20px; font-weight:bold; text-align:center; margin-top:40px;">
+                                {% if by_all %}토탈 평점 결과 보기{% else %}간단 평점 남기기{% endif %}<br>
+                                <a style="font-weight:normal; font-size:12px; color:#ba1626;">
+                                    {% if by_all %}
+                                        모든 유저들이 남긴 평균 평점이 보여지게 됩니다.
+                                    {% else %}
+                                        평점을 남기시면 포인트 50점이 주어지게 됩니다.
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            {% include 'function/strategy/match_review/after.jinja' with after=match %}
+                        </div>
+                        {% if by_all %}
+                            <div class="row">
+                                <div class="col-md-4" style="margin:0 auto; margin-bottom:8px;">
+                                    <div class="rounded" style="background-color:#ba1626; opacity:10; color:#ffffff; font-size: 13px; font-weight:bold; text-align:center; width:76px; height:75px; padding-top:2px;">
+                                        <div style="margin-top:5px;">
+                                            Arsenal
+                                        </div>
+                                        <div style="font-size:35px; font-weight:bold; padding-top:0;">
+                                            {{ by_all.0 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4" style="margin:0 auto;">
+                                    {# strategy-전술, player-선수, result-평점 결과를 뿌릴 건지 여부 is_value-후보 선수들이 나올 건지 여부 #}
+                                    {% include 'function/strategy/field.jinja' with strategy=match.set_strategy player1=by_all.1 player2=by_all.2 player3=by_all.3 player4=by_all.4 player5=by_all.5 player6=by_all.6 player7=by_all.7 player8=by_all.8 player9=by_all.9 player10=by_all.10 player11=by_all.11 player12=by_all.12 player13=by_all.13 player14=by_all.14 result=True is_value=True %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row justify-content-center">
+                                <div class="col-md-4 offset-md-1">
+                                    {# strategy-전술, player-선수, result-평점 결과를 뿌릴 건지 여부 is_value-후보 선수들이 나올 건지 여부 #}
+                                    {% include 'function/strategy/field.jinja' with strategy=match.set_strategy player1=match.player1 player2=match.player2 player3=match.player3 player4=match.player4 player5=match.player5 player6=match.player6 player7=match.player7 player8=match.player8 player9=match.player9 player10=match.player10 player11=match.player11 player12=match.player12 player13=match.player13 player14=match.player14 result=False is_value=True %}
+                                </div>
+                                <div class="col-md-6 col-md-1">
+                                    <form action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="value" value="simple_point">
+                                        <div>
+                                            <img src="{{ arsenal.photo.url }}" style="position:absolute; left:15px; top:10px; width:50px; border:1px solid #2d2d2d; border-radius:50%;">
+                                            <select class="form-control" name="team_point" style="position:absolute; left:80px; top:20px; font-size:12px; height:32px; border:1px solid #999999; width:285px; color:#4a4a4a;" value="">
+                                                {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player1.name.photo.url }}" style="position:absolute; left:15px; top:70px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player1_point" style="position:absolute; left:80px; top:80px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player2.name.photo.url }}" style="position:absolute; left:200px; top:70px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player2_point" style="position:absolute; left:265px; top:80px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player3.name.photo.url }}" style="position:absolute; left:15px; top:130px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player3_point" style="position:absolute; left:80px; top:140px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player4.name.photo.url }}" style="position:absolute; left:200px; top:130px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player4_point" style="position:absolute; left:265px; top:140px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player5.name.photo.url }}" style="position:absolute; left:15px; top:190px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player5_point" style="position:absolute; left:80px; top:200px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player6.name.photo.url }}" style="position:absolute; left:200px; top:190px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player6_point" style="position:absolute; left:265px; top:200px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player7.name.photo.url }}" style="position:absolute; left:15px; top:250px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player7_point" style="position:absolute; left:80px; top:260px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player8.name.photo.url }}" style="position:absolute; left:200px; top:250px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player8_point" style="position:absolute; left:265px; top:260px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player9.name.photo.url }}" style="position:absolute; left:15px; top:310px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player9_point" style="position:absolute; left:80px; top:320px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player10.name.photo.url }}" style="position:absolute; left:200px; top:310px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player10_point" style="position:absolute; left:265px; top:320px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ match.player11.name.photo.url }}" style="position:absolute; left:15px; top:370px; width:50px; border-radius:50%;">
+                                            <select class="form-control" name="player11_point" style="position:absolute; left:80px; top:380px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                               {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        {% if match.player12 %}
+                                            <div style="margin-top:10px;">
+                                                <img src="{{ match.player12.name.photo.url }}" style="position:absolute; left:15px; top:430px; width:50px; border-radius:50%;">
+                                                <select class="form-control" name="player12_point" style="position:absolute; left:80px; top:440px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                                   {% for a in "0123456789" %}
+                                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        {% else %}
+                                            <div style="margin-top:10px;">
+                                                <img src="http://127.0.0.1:8000/media/default/default.png" style="border:1px solid #999999; position:absolute; left:15px; top:430px; width:50px; border-radius:50%;">
+                                                <div style="position:absolute; color:grey; font-size:14px; left:80px; top:445px;">교체 없음</div>
+                                            </div>
+                                        {% endif %}
+                                        {% if match.player13 %}
+                                            <div style="margin-top:10px;">
+                                                <img src="{{ match.player13.name.photo.url }}" style="position:absolute; left:200px; top:430px; width:50px; border-radius:50%;">
+                                                <select class="form-control" name="player13_point" style="position:absolute; left:265px; top:440px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                                   {% for a in "0123456789" %}
+                                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        {% else %}
+                                            <div style="margin-top:10px;">
+                                                <img src="http://127.0.0.1:8000/media/default/default.png" style="border:1px solid #999999; position:absolute; left:200px; top:430px; width:50px; border-radius:50%;">
+                                                <div style="position:absolute; color:grey; font-size:14px; left:260px; top:445px;">교체 없음</div>
+                                            </div>
+                                        {% endif %}
+                                        {% if match.player14 %}
+                                            <div style="margin-top:10px;">
+                                                <img src="{{ match.player14.name.photo.url }}" style="position:absolute; left:15px; top:490px; width:50px; border-radius:50%;">
+                                                <select class="form-control" name="player14_point" style="position:absolute; left:80px; top:500px; font-size:12px; height:32px; border:1px solid #999999; width:100px; color:#4a4a4a;" value="">
+                                                   {% for a in "0123456789" %}
+                                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        {% else %}
+                                            <div style="margin-top:10px;">
+                                                <img src="http://127.0.0.1:8000/media/default/default.png" style="border:1px solid #999999; position:absolute; left:15px; top:490px; width:50px; border-radius:50%;">
+                                                <div style="position:absolute; color:grey; font-size:14px; left:80px; top:505px;">교체 없음</div>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <a class="btn" id="simple-point-btn" style="cursor:pointer; position:absolute; left:140px; width:80px; top:560px; font-weight:bold; background-color:#2d2d2d; color:white; height:32px; font-size:13px; border:1px solid #2d2d2d;">등 록</a>
+                                        </div>
+                                        {# simple point button #}
+                                        {% include 'gooner/modal/simple_point.jinja' %}
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div id="gooner_score_correct"></div>
+                <div class="row justify-content-center" style="border-bottom:1px solid #ddd; margin:50px 0 0 0; padding:0 0 50px 0;">
+                    <div class="col-md-6" style="padding:0; margin:0;">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:center; font-size:20px; font-weight:bold;">
+                                {{ end_event_round }}회차 스코어 맞추기 당첨자{% if event_result %}(<a style="color:#ba1626;">{{ event_result|length }}</a>분){% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:center; font-size:12px; color:#ba1626;">
+                                당첨자에게는 포인트 100점이 주어지게 됩니다.
+                            </div>
+                        </div>
+                        <div class="row" style="padding:0; margin:0;">
+                            {% if event_result %}
+                                {% for user in event_result|cut:15 %}
+                                    <div class="col-md-4" style="padding-left:20px; text-align:left; margin-top:10px;">
+                                        <img class="rounded-circle" src="{{ user.user.photo.url }}" style="width:23px;"><a style="padding-left:6px; font-size:12px; {% if user.user == request.user %}color:#BB00AE; font-weight:bold;{% else %}color:#3e3e3e;{% endif %} ">{{ user.user.nickname }}</a><br>
+                                    </div>
+                                {% endfor %}
+                                {% if event_result|length > 15 %}
+                                    <div class="col-md-12">
+                                        <a class="btn see-all-success-btn" href="" style="font-size:12px; text-align:center; border:1px solid #ba1626;">당첨자 전체 보기</a>
+                                    </div>
+                                    {# 당첨자 전체 보기 창 #}
+                                    {% include 'gooner/modal/score_correct_view.jinja' %}
+                                {% endif %}
+                            {% else %}
+                                당첨자가 없습니다.
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="vote_result" style="height:260px;">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:center; font-size:20px; font-weight:bold;">
+                                {{ next_event_round }}회차 스코어 맞추기
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:center; font-size:12px; color:#ba1626;">
+                                투표를 하시면 포인트 50점이 주어지게 됩니다.
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% if vote_results %}
+                                <div class="col-md-12">
+                                    {% for vote in vote_results %}
+                                        <div class="row">
+                                            <div class="col-12" style="text-align:center; margin-top:15px;">
+                                                <div style="float:left; width:20%; margin-left:46px; padding-left:40px; font-size:15px; font-weight:bold; color:#171717;">
+                                                    {{ vote.0 }}
+                                                </div>
+                                                <div class="progress" style="float:left; width:200px; height:22px;">
+                                                    <div class="progress-bar" style="background-color:#b50014; width:{{ vote.1 }}%; height:22px;"></div>
+                                                </div>
+                                                <div style="float:left; width:10%; font-size:14px; font-weight:bold; color:#b50014;">
+                                                    {{ vote.1 }}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="col-md-12" style="text-align:center; font-size:20px;">
+                                    <form action="{% url 'arsenal:vote' %}#vote_result" method="post" style="margin-top:20px; margin-bottom:40px;">
+                                        {% csrf_token %}
+                                        {# default 로 날라갈 정보가 보여짐 #}
+                                        <input type="hidden" name="value" value="score">
+                                        {# 경기가 보여짐 #}
+                                        <div style="width:150px; text-align:right; position:absolute; left:52px; top:20px; font-weight:bold; color:#2c2c2c;">{{ next_match.home_team }}</div>
+                                        <img src="{{ next_match.home_team.team.photo.url }}" style="position:absolute; left:210px; top:18px; width:40px;">
+                                        <a style="text-align:center;">vs</a>
+                                        <img src="{{ next_match.away_team.team.photo.url }}" style="position:absolute; right:210px; top:18px; width:40px;">
+                                        <div style="width:150px; text-align:left; position:absolute; right:52px; top:20px; font-weight:bold; color:#2c2c2c;">{{ next_match.away_team }}</div>
+                                        <div style="position:absolute; left:105px;  top:90px;">
+                                            <input class="form-control" type="text" name="home_score" style="width:100px; font-size:12px; color:#555555; height:30px;" value="0">
+                                            <a style="font-size:13px; color:#2d2d2d;">홈팀 스코어</a>
+                                        </div>
+                                        <div style="position:absolute; right:105px; top:90px;">
+                                            <input class="form-control" type="text" name="away_score" style="width:100px; font-size:12px; color:#555555; height:30px;" value="0">
+                                            <a style="font-size:13px; color:#2d2d2d;">원정팀 스코어</a>
+                                        </div>
+                                        <div style="font-size:13px; margin-top:30px;">
+                                            {{ next_match.set_round }}<br>
+                                            {{ next_match.match_date|date:'y.m.d H:i' }}<br>
+                                            {{ next_match.home_team.team.stadium }}<br>
+                                        </div>
+                                        <a class="btn btn-secondary score-event-btn" href="" style="margin-top:20px; border:1px solid red; font-size:14px; width:80px;">vote</a>
+                                        {# 당첨자 전체 보기 창 #}
+                                        {% include 'gooner/modal/score_event.jinja' %}
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div id="gooner_question"></div>
+                <div class="row justify-content-center" style="padding:0; margin:0; margin-top:50px;">
+                    <div class="col-md-5" style="text-align:center; font-size:20px; font-weight:bold;">
+                        설문지
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="padding:0; margin:0;">
+                    <div class="col-md-5" style="margin:30px 0 20px 0; text-align:center; font-size:15px; color:#ba1626; font-weight:bold;">
+                        <a href="{% url 'arsenal:dead_survey' %}">기간 완료된 설문지 보기</a>
+                    </div>
+                </div>
+                <div class="row justify-content-center" style="padding:0; margin:0;">
+                    <div class="col-md-10" style="margin:10px 0 200px 0;">
+                        <div class="row justify-content-center">
+                            {% for vote in votes %}
+                                <div class="col-md-8" style="">
+                                    <div class="row" style="width:600px; margin-bottom:10px;">
+                                        <div class="col-md-12 card" style="">
+                                            {% with vote_answer=vote.vote_answer_question.all %}
+                                                {% if vote.is_sort == 'select' %}
+                                                    <div id="result{{ forloop.counter }}"></div>
+                                                    {# 만일 유저가 투표를 한 상태라면 결과를 보여줌 #}
+                                                    {% if vote.vote_user_question.all|check_in:request.user %}
+                                                        <div style="margin:30px 0 30px 0;">
+                                                            <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                            </div>
+                                                            <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                                                                설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                            </div>
+                                                            <div style="text-align:center; font-size:12px; color:grey; margin-bottom:12px;">
+                                                                (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                                                            </div>
+                                                            {% for answer in vote_answer %}
+                                                                <div class="row">
+                                                                    <div class="col-md-12" style="margin:0 0 3px 100px;">
+                                                                        <a style="margin:0 20px 0 10px; padding-top:30px; font-size:13px; color:#2d2d2d;">{{ answer.answer }}</a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12" style="margin:0 0 12px 100px;">
+                                                                        {% with total=vote_answer|vote_num %}
+                                                                            <div class="progress" style="float:left; width:350px; height:20px; margin-right:10px;">
+                                                                                <div class="progress-bar" style="float:left; background-color:#b50014; width:{{ answer.vote|ratio_value:total }}%; height:20px;"></div>
+                                                                            </div>
+                                                                            {% if answer.vote %}
+                                                                                <div style="float:left; font-size:13px; color:#2d2d2d; font-weight:bold;">
+                                                                                    {{ answer.vote|ratio_value:total }}%
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        <form action="{% url 'arsenal:question' question_id=vote.id %}#result{{ forloop.counter }}" method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="author" value="{{ request.user.id }}">
+                                                            <input type="hidden" name="question" value="{{ vote.id }}">
+                                                            <input type="hidden" name="is_sort" value="select">
+                                                            <div style="margin:30px 0 30px 0;">
+                                                                <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                    Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                                </div>
+                                                                <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                                                                    설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                                </div>
+                                                                <div style="text-align:center; font-size:12px; color:grey; margin-bottom:12px;">
+                                                                    (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                                                                </div>
+                                                                {% for answer in vote_answer %}
+                                                                    <div style="margin-left:80px;">
+                                                                        <input type="{% if vote.choice_num == 1 %}radio{% else %}checkbox{% endif %}" id="select_answer_{{ forloop.counter }}{{ vote.id }}" name="select_answer" value="{{ answer.id }}" style="width:12px; padding-top:2px; margin-right:5px;">
+                                                                        <label for="select_answer_{{ forloop.counter }}{{ vote.id }}" style="font-size:13px; color:#2d2d2d;">{{ answer.answer }}</label>
+                                                                    </div>
+                                                                {% endfor %}
+                                                                <div style="margin-top:10px; text-align:center;">
+                                                                    <input class="btn question_submit" type="submit" value="등 록" style="background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:80px;">
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    {% endif %}
+                                                {% elif vote.is_sort == 'write' %}
+                                                    <div id="result{{ forloop.counter }}"></div>
+                                                    {# 만일 유저가 투표를 한 상태라면 완료 되었다고 말함 #}
+                                                    {% if vote.vote_user_question.all|check_in:request.user %}
+                                                        <div style="margin:30px 0 30px 0; text-align:center;">
+                                                            <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                            </div>
+                                                            <div style="font-size:12px; color:grey; margin-bottom:20px;">
+                                                                설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                            </div>
+                                                            <div style="font-size:13px; margin-bottom:10px; font-weight:bold; color:#ba1626;">
+                                                                설문지 답을 완료한 상태입니다.<br>
+                                                                감사합니다.
+                                                            </div>
+                                                        </div>
+                                                    {% else %}
+                                                        <form action="{% url 'arsenal:question' question_id=vote.id %}#result{{ forloop.counter }}" method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="author" value="{{ request.user.id }}">
+                                                            <input type="hidden" name="question" value="{{ vote.id }}">
+                                                            <input type="hidden" name="is_sort" value="write">
+                                                            <div style="margin:30px 0 30px 0; text-align:center;">
+                                                                <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                    Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                                </div>
+                                                                <div style="font-size:12px; color:grey; margin-bottom:8px;">
+                                                                    설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                                </div>
+                                                                <div>
+                                                                    <div class="row justify-content-center">
+                                                                        <div class="col-md-8">
+                                                                            <label for="write_answer" style="display:none;"></label>
+                                                                            <input class="form-control" type="text" id="write_answer" name="write_answer" value="" style="font-size:13px; margin-bottom:10px; color:grey; width:400px;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <input class="btn" type="submit" value="등 록" style="background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:80px;">
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    {% endif %}
+                                                {% elif vote.is_sort == 'picture' %}
+                                                    <div id="result{{ forloop.counter }}"></div>
+                                                    {# 만일 유저가 투표를 한 상태라면 완료 되었다고 말함 #}
+                                                    {% if vote.vote_user_question.all|check_in:request.user %}
+                                                        <div style="margin:30px 0 30px 0;">
+                                                            <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                            </div>
+                                                            <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                                                                설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                            </div>
+                                                            <div style="text-align:center; font-size:12px; color:grey; margin-bottom:15px;">
+                                                                (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                                                            </div>
+                                                            {% for answer in vote.vote_answer_question.all %}
+                                                                <div class="row">
+                                                                    <div class="col-md-12" style="margin:0 0 5px 100px;">
+                                                                            <img class="rounded" src="{{ answer.pic_answer.url }}" style="width:80px;">
+                                                                            <a style="margin:0 20px 0 5px; padding-top:30px; font-size:13px; color:#2d2d2d;">{{ answer.answer }}</a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12" style="margin:0 0 15px 100px;">
+                                                                        {% with total=vote.vote_answer_question.all|vote_num %}
+                                                                            <div class="progress" style="float:left; width:350px; height:20px; margin-right:10px;">
+                                                                                <div class="progress-bar" style="float:left; background-color:#b50014; width:{{ answer.vote|ratio_value:total }}%; height:20px;"></div>
+                                                                            </div>
+                                                                            {% if answer.vote %}
+                                                                                <div style="float:left; font-size:13px; color:#2d2d2d; font-weight:bold;">
+                                                                                    {{ answer.vote|ratio_value:total }}%
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        <form action="{% url 'arsenal:vote' %}#result{{ forloop.counter }}" method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="author" value="{{ request.user.id }}">
+                                                            <input type="hidden" name="question" value="{{ vote.id }}">
+                                                            <input type="hidden" name="is_sort" value="picture">
+                                                            <div style="margin:30px 0 30px 0;">
+                                                                <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                                                                    Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                                                                </div>
+                                                                <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                                                                    설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                                                                </div>
+                                                                <div style="text-align:center; font-size:12px; color:grey; margin-bottom:12px;">
+                                                                    (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                                                                </div>
+                                                                {% if vote.choice_num == 1 %}
+                                                                    {% for answer in vote.vote_answer_question.all %}
+                                                                        <div style="margin-left:80px;">
+                                                                            <input type="radio" id="select_answer_{{ forloop.counter }}{{ vote.id }}" name="select_answer" value="{{ answer.id }}" style="width:12px; padding-top:2px; margin-right:5px;">
+                                                                            <img src="{{ answer.pic_answer.url }}"><label for="select_answer_{{ forloop.counter }}{{ vote.id }}" style="font-size:13px; color:#2d2d2d; {% if answer.is_show == False %}display:none;{% endif %}">{{ answer.answer }}</label>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    {% for answer in vote.vote_answer_question.all %}
+                                                                        <div style="margin-left:80px; margin-bottom:10px;">
+                                                                            <input type="checkbox" id="select_answer_{{ forloop.counter }}{{ vote.id }}" name="select_answer" value="{{ answer.id }}" style="width:12px; padding-top:2px; margin-right:5px;">
+                                                                            <img class="rounded" src="{{ answer.pic_answer.url }}" style="width:80px;">
+                                                                            <label for="select_answer_{{ forloop.counter }}{{ vote.id }}" style="padding-left:10px; font-size:13px; color:#2d2d2d; {% if answer.is_show == False %}display:none;{% endif %}">
+                                                                                {{ answer.answer }}
+                                                                            </label>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                                <div style="margin-top:10px; text-align:center;">
+                                                                    <input class="btn" type="submit" value="등 록" style="background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:80px;">
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="col-md-12" style="text-align:center; font-size:20px; font-weight:bold;">
+                                    설문할 내용이 없습니다.
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'function/message_modal/write-message.jinja' %}
+{% endblock %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            $('.see-all-success-btn').on('click', function(e){
+                e.preventDefault();
+                $('#see-all-success-modal').modal({
+                    show:true,
+                    backdrop: 'static',
+                    keyboard: false
+                })
+            });
+
+            $('.score-event-btn').on('click', function(e){
+                e.preventDefault();
+                $('#score-event-modal').modal({
+                    show:true,
+                    backdrop: 'static',
+                    keyboard:false
+                })
+            });
+
+            $('#simple-point-btn').on('click', function(e){
+                e.preventDefault();
+                $('#simple-point-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            })
+        });
+    </script>
+{% endblock %}

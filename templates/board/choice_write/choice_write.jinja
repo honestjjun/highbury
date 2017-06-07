@@ -1,0 +1,90 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <div class="container" style="padding-bottom:150px;"><br>
+        <div class="row justify-content-center">
+            <div class="col-md-11" style="margin-top:80px; text-align:center;">
+                <div style="font-size:32px; color:#ba1626; padding:50px 0 50px 0; font-weight:bold; border-top:4px solid #ba1626; border-bottom:4px solid #ba1626;">
+                    <img src="{{ 'Arsenal'|find_team }}" style="width:65px; margin-right:5px;">HIGHBURY
+                </div>
+                <div class="row" style="margin-top:70px;">
+                    <div class="col-md-3">
+                        <div class="row justify-content-center" style="width:180px; margin-left:30px;">
+                            <div class="col-md-12">
+                                <div style="font-size:20px; font-weight:bold; margin-bottom:5px; text-align:center;">
+                                    자유글 작성
+                                </div>
+                                <div style="font-size:12px; text-align:center;">
+                                    자유롭게 글을 작성하시면 됩니다.
+                                </div>
+                                <div style="margin-top:80px;">
+                                    <a href="{% url 'board_free:write_free' %}" class="btn" style="font-size:13px; width:100px; background-color:#ba1626; color:white;">작  성</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row justify-content-center" style="width:200px;">
+                            <div class="col-md-12">
+                                <div style="font-size:20px; font-weight:bold; margin-bottom:5px; text-align:center">
+                                    경기 프리뷰 작성
+                                </div>
+                                <div style="font-size:12px; text-align:center;">
+                                    원하는 경기 전술 선택과 함께 프리뷰를 작성하시게 됩니다.
+                                </div>
+                                <div style="margin-top:80px;">
+                                    <a href="{% url 'board_free:choice_game' sort='before' %}" class="btn" style="font-size:13px; width:100px; background-color:#ba1626; color:white;">작  성</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row justify-content-center" style="width:200px;">
+                            <div class="col-md-12">
+                                <div style="font-size:20px; font-weight:bold; margin-bottom:5px; text-align:center;">
+                                    경기 후 리뷰 작성
+                                </div>
+                                <div style="font-size:12px; text-align:center;">
+                                    팀과 각 선수별 평점과 리뷰를 작성하시게 됩니다.
+                                </div>
+                                <div style="margin-top:80px;">
+                                    <a href="{% url 'board_free:choice_game' sort='after' %}" class="btn" style="font-size:13px; width:100px; background-color:#ba1626; color:white;">작  성</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row justify-content-center" style="width:180px; margin-right:30px;">
+                            <div class="col-md-12">
+                                <div style="font-size:20px; font-weight:bold; margin-bottom:5px; text-align:center">
+                                    선수 리뷰 작성
+                                </div>
+                                <div style="font-size:12px; text-align:center;">
+                                    개개인의 선수 리뷰를 작성하시게 됩니다.
+                                </div>
+                                <div style="margin-top:80px;">
+                                    <a href="{% url 'board_free:choice_game' sort='player' %}" class="btn" style="font-size:13px; width:100px; background-color:#ba1626; color:white;">작  성</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="height:290px;">
+                    <div class="col-md-12" style="font-size:13px;">
+                        <div style="background-color:#2d2d2d; padding-top:30px; position:absolute; top:250px; height:140px; width:1020px; color:white; text-align:center;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">
+                                주의사항
+                            </div>
+                            <div style="text-align:center; color:#b4b4b4;">
+                                상대방에 대한 비방, 욕설, 행위등을 금지 합니다.
+                            </div>
+                            <div style="text-align:center; color:#b4b4b4;">
+                                무분별한 도배와 친목을 금지합니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

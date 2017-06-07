@@ -1,0 +1,233 @@
+{% extends 'base.jinja' %}
+{% load custom_tags %}
+{% block content %}
+    <!--폼 삭제 시키는거 해야 함-->
+    <div class="container" style="margin-bottom:200px;">
+        <!--  간단 평점 입력 시 해당 부분으로 창이 이동  -->
+        <div id="gooner_simple_point"></div>
+        <div class="row" style="padding:0;">
+            <div class="col-md-12" style="font-size:20px; font-weight:bold; text-align:center; padding-top:90px">
+                {% if by_all %}토탈 평점 결과 보기{% else %}간단 평점 남기기{% endif %}<br>
+                <a style="font-weight:normal; font-size:12px; color:#ba1626;">
+                    {% if by_all %}
+                        모든 유저들이 남긴 평균 평점이 보여지게 됩니다.
+                    {% else %}
+                        평점을 남기시면 포인트 50점이 주어지게 됩니다.
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            {% include 'function/strategy/match_review/after.jinja' with after=match %}
+        </div>
+        <!--  유저가 투표 혹은 경기 후 리뷰를 남겼을 경우  -->
+        {% if by_all %}
+            <div class="row justify-content-center">
+                <div style="width:340px;">
+                    <div class="rounded" style="background-color:#ba1626; margin-bottom:8px; color:#ffffff; font-size: 13px; font-weight:bold; text-align:center; width:76px; height:75px; padding-top:6px;">
+                        Arsenal
+                        <div style="font-size:35px; padding-top:0;">
+                            {{ by_all.0 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" style="padding-bottom:50px; border-bottom:1px solid #ddd;">
+                {% include 'gooner/include/vote_result.jinja' with strategy=match.set_strategy player1=by_all.1 player2=by_all.2 player3=by_all.3 player4=by_all.4 player5=by_all.5 player6=by_all.6 player7=by_all.7 player8=by_all.8 player9=by_all.9 player10=by_all.10 player11=by_all.11 player12=by_all.12 player13=by_all.13 player14=by_all.14 %}
+            </div>
+        <!--  유저가 투표 혹은 경기 후 리뷰를 남기지 않았을 경우  -->
+        {% else %}
+            <div class="row justify-content-center" style="padding-bottom:50px; border-bottom:1px solid #ddd;">
+                <!--  해당 경기 선수들 배치  -->
+                <div style="width:342px;">
+                    {% include 'gooner/include/vote_before_simple.jinja' with strategy=match.set_strategy player1=match.player1 player2=match.player2 player3=match.player3 player4=match.player4 player5=match.player5 player6=match.player6 player7=match.player7 player8=match.player8 player9=match.player9 player10=match.player10 player11=match.player11 player12=match.player12 player13=match.player13 player14=match.player14 %}
+                </div>
+                <!--  간단 포인트 입력 칸  -->
+                <div class="col-xl-4 col-lg-5 col-md-7 col-sm-9 col-11 card" id="simple-vote-field">
+                    <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="value" value="simple_point">
+                    <div class="row" style="border-bottom:1px solid #ddd;">
+                        <div class="col-md-12" style="margin-top:10px; margin-bottom:6px; text-align:center; font-weight:bold; font-size:15px;">
+                            간단 평점 남기기
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" style="padding-left:20px; padding-right:20px;">
+                        {% include 'gooner/include/vote_team.jinja' %}
+                    </div>
+                    <div class="row" style="padding-left:20px; padding-right:10px;">
+                        {% for player in match_player %}
+                            {% include 'gooner/include/vote_sort_player.jinja' with player=player %}
+                        {% endfor %}
+                    </div>
+                    <div class="row" style="border-top:1px solid #ddd;">
+                        <div class="col-md-12" style="text-align:center; margin:7px 0 7px 0;">
+                            <a class="btn" data-toggle="modal" data-target="#simple-point" style="cursor:pointer; font-weight:bold; width:120px; background-color:#2d2d2d; color:white; font-size:13px; border:1px solid #2d2d2d;">등 록</a>
+                        </div>
+                    </div>
+                    {% include 'gooner/modal/simple_point.jinja' %}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+
+        <!--  스코어 맞추기 입력 시 해당 부분으로 창 이동  -->
+        <div id="gooner_score_correct"></div>
+        <div class="row justify-content-center" style="padding:50px 0 50px 0; border-bottom:1px solid #ddd;">
+            <!--  전 회차 스코어 맞추기 당첨자  -->
+            <div class="col-md-12 col-lg-6">
+                <div class="row justify-content-center" style="font-size:20px; font-weight:bold;">
+                    {{ end_event_round }}회차 스코어 맞추기 당첨자
+                    <!--  담청자가 있다면 몇명인지 표시함  -->
+                    {% if event_result %}(<a style="color:#ba1626;">{{ event_result|length }}</a>분){% endif %}
+                </div>
+                <div class="row justify-content-center" style="font-size:12px; color:#ba1626;">
+                    당첨자에게는 포인트 50점이 주어지게 됩니다.
+                </div>
+                <div class="row">
+                    {% for user in event_result|cut:15 %}
+                        <div class="col-xl-3 col-lg-4 col-md-3 col-sm-4 col-6" style="text-align:left; margin-top:10px;">
+                            <img class="rounded-circle" src="{{ user.user.photo.url }}" style="float:left; width:23px;">
+                            <a style="float:left; padding:5px 0 0 6px; font-size:12px; {% if user.user == request.user %}color:#BB00AE; font-weight:bold;{% else %}color:#3e3e3e;{% endif %}">
+                                {{ user.user.nickname }}
+                            </a>
+                        </div>
+                    {% empty %}
+                        <div class="col-md-12" style="margin-top:10px; text-align:center; font-size:17px; font-weight:bold; color:#6f6f6f;">
+                           당첨자가 없습니다.
+                        </div>
+                    {% endfor %}
+                </div>
+                <!--  15명 이상이 되면 당첨자 전체 보기가 가능  -->
+                {% if event_result|length > 15 %}
+                    <div class="row justify-content-center" style="margin-top:20px;">
+                        <a class="btn" data-target="#score-correct-view" data-toggle="modal" style="cursor:pointer; font-size:12px; border:1px solid #ba1626;">당첨자 전체 보기</a>
+                        <!--  담청자 전체 보기 modal  -->
+                        {% include 'gooner/modal/score_correct_view.jinja' %}
+                    </div>
+                {% endif %}
+            </div>
+            <!--  현재 회차 스코어 맞추기  -->
+            <div class="col-md-12 col-lg-6" id="next-score-event">
+                <div class="row justify-content-center" style="font-size:20px; font-weight:bold;">
+                    {{ next_event_round }}회차 스코어 맞추기
+                </div>
+                <div class="row justify-content-center" style="font-size:12px; color:#ba1626;">
+                    투표를 하시면 포인트 50점이 주어지게 됩니다.
+                </div>
+                <!--  유저가 스코어 맞추기 투표를 하였다면 투표 결과를 보여줌  -->
+                {% for vote in vote_results %}
+                    <div class="row justify-content-center" style="margin-top:10px;">
+                        <div class="col-lg-10 col-md-8 col-10">
+                            <div style="float:left; width:8%; font-size:15px; font-weight:bold; color:#171717;">
+                                {{ vote.0 }}
+                            </div>
+                            <div class="progress" style="float:left; width:80%; height:22px;">
+                                <div class="progress-bar" style="background-color:#b50014; width:{{ vote.1 }}%; height:22px;"></div>
+                            </div>
+                            <div style="float:left; width:12%; padding-left:5px; font-size:14px; font-weight:bold; color:#b50014;">
+                                {{ vote.1 }}%
+                            </div>
+                        </div>
+                    </div>
+                    <!--  유저가 스코어 맞추기 투표를 하지 않았다면 폼이 나옴  -->
+                    {% empty %}
+                    <div class="row">
+                        <div class="col-md-12" style="text-align:center; margin:10px 0 0 0;">
+                            {% include 'gooner/include/score_match.jinja' %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!--  설문지 부분  -->
+        <div id="gooner_question"></div>
+        <div class="row justify-content-center" style="margin-top:50px; font-size:20px; font-weight:bold;">
+            설문지
+        </div>
+        <!--  기간 만료된 설문지 보기  -->
+        <div class="row justify-content-center" style="margin:30px 0 10px 0; text-align:center; font-size:15px; color:#ba1626; font-weight:bold;">
+            <a href="{% url 'arsenal:dead_survey' %}">기간 완료된 설문지 보기</a>
+        </div>
+        <!--  현재 진행중인 설문지 보기  -->
+        {% for vote in votes %}
+            <!--  설문 완료 시 현재 설문지 위치로 바로 창 이동  -->
+            <div id="result{{ forloop.counter }}"></div>
+            <div class="row justify-content-center" style="margin-top:10px;">
+                <div class="col-xl-6 col-lg-7 col-md-9 col-sm-11 card" style="padding:30px 0 30px 0;">
+                    <form action="{% url 'arsenal:question' question_id=vote.id %}#result{{ forloop.counter }}" method="post">
+                        {% csrf_token %}
+                        <div style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:10px; color:#2d2d2d;">
+                            Q.<a style="font-size:17px;">{{ vote.id }}</a> {{ vote.question }}
+                        </div>
+                        <div style="text-align:center; font-size:12px; color:grey; margin-bottom:6px;">
+                            설문 기간 : {{ vote.start_vote|date:'m월 d일' }} ~ {{ vote.end_vote|date:'m월 d일' }}
+                        </div>
+                        <!--  vote 가 select 혹은 picture 일 경우  -->
+                        {% if vote.is_sort == 'select' or vote.is_sort == 'picture' %}
+                            <div style="text-align:center; font-size:12px; color:grey; margin-bottom:12px;">
+                                (최대 <a style="color:#ba1626; font-weight:bold;">{{ vote.choice_num }}</a>개 답변 가능)
+                            </div>
+                            <!--  유저가 설문 조사를 한지 안한지 여부 파악  -->
+                            {% if vote.vote_user_question.all|check_in:request.user %}
+                                {% for answer in vote.vote_answer_question.all %}
+                                    <div style="margin-top:10px;">
+                                        <div style="width:80%; margin:0 auto;">
+                                            <div style="font-size:13px; margin-bottom:5px;">
+                                                {% if vote.is_sort == 'picture' %}
+                                                    <img class="rounded" src="{{ answer.pic_answer.url }}" style="width:80px; margin-right:5px;">
+                                                {% endif %}
+                                                {{ answer.answer }}
+                                            </div>
+                                            <div>
+                                                {% with total=vote.vote_answer_question.all|vote_num %}
+                                                <div class="progress" style="float:left; width:100%; height:20px; margin-right:10px;">
+                                                    <div class="progress-bar" style="float:left; background-color:#b50014; width:{{ answer.vote|ratio_value:total }}%; height:20px;"></div>
+                                                </div>
+                                                <div style="font-size:13px; font-weight:bold;">
+                                                    {% if answer.vote %}{{ answer.vote|ratio_value:total }}%{% else %}0.0%{% endif %}
+                                                </div>
+                                                {% endwith %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {% for answer in vote.vote_answer_question.all %}
+                                    <div style="margin:5px 0 0 10%;">
+                                        <input type="{% if vote.choice_num == 1 %}radio{% else %}checkbox{% endif %}" id="select_answer_{{ forloop.counter }}{{ vote.id }}" name="select_answer" value="{{ answer.id }}" style="margin-right:5px;">
+                                        <!--  vote 가 picture 일 경우 사진 추가  -->
+                                        {% if vote.is_sort == 'picture' %}
+                                            <img class="rounded" src="{{ answer.pic_answer.url }}" style="width:80px; margin-right:5px;">
+                                        {% endif %}
+                                        <label for="select_answer_{{ forloop.counter }}{{ vote.id }}" style="font-size:13px; color:#2d2d2d;">{{ answer.answer }}</label>
+                                    </div>
+                                {% endfor %}
+                                <div style="margin-top:10px; text-align:center;">
+                                    <input class="btn" type="submit" value="등 록" style="cursor:pointer; background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:80px;">
+                                </div>
+                            {% endif %}
+                        <!--  작성 설문지일 경우  -->
+                        {% else %}
+                            <!--  유저가 설문 조사를 한지 안한지 여부 파악  -->
+                            {% if vote.vote_user_question.all|check_in:request.user %}
+                                <div style="text-align:center; font-size:13px; margin:10px 0 10px 0; font-weight:bold; color:#ba1626;">
+                                    설문지 답을 완료한 상태입니다.<br>
+                                    감사합니다.
+                                </div>
+                            {% else %}
+                                <div class="row justify-content-center">
+                                    <input class="form-control" type="text" id="write_answer" name="write_answer" value="" style="font-size:13px; margin:10px 0 10px 0; color:grey; width:80%;">
+                                </div>
+                                <div style="margin-top:10px; text-align:center;">
+                                    <input class="btn" type="submit" value="등 록" style="cursor:pointer; background-color:#2d2d2d; border:1px solid #2d2d2d; color:white; font-size:13px; width:80px;">
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

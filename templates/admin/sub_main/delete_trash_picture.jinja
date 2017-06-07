@@ -1,0 +1,35 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center" style="margin:0; padding:0; width:1100px; height:100%; background-color:white;">
+            <div class="col-12" style="padding:0; margin:0;">
+                <div style="text-align:center; margin:100px 0 100px 0;">
+                    <div style="font-size:16px; color:#ba1626; font-weight:bold; margin-bottom:30px;">
+                        주의 : 지울 그림이 있다면 한번씩 삭제 버튼을 눌러 주시면 됩니다.
+                    </div>
+
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <h6>게시물에 등록된 img src 수</h6>
+                        {{ a1|length }}<br>
+                        <h6>attachment에 등록된 그림 수</h6>
+                        {{ a2|length }}<br>
+                        <a style="font-size:15px; color:#ba1626;">지울 쓸모없는 그림 파일 수</a><br>
+                        {{ trash_summernote_pictures|length }}
+                        <br><br><br>
+
+                        <h6>유저들의 profile 사진 수</h6>
+                        {{ s1|length }}<br>
+                        <h6>profile_photo 에 등록된 사진 수</h6>
+                        {{ s2|length }}<br>
+                        <a style="font-size:15px; color:#ba1626;">지울 쓸모없는 profile 그림 파일 수</a><br>
+                        {{ trash_profile_pictures|length }}
+                        <div style="margin-top:20px;">
+                            <input class="btn" type="submit" value="삭 제" style="background-color:#2d2d2d; height:38px; font-weight:bold; color:white; width:100px; font-size:14px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

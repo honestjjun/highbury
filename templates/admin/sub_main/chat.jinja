@@ -1,0 +1,44 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row" style="margin-top:50px; margin-bottom:50px;">
+                    <div class="col-md-12">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div style="float:left;">
+                                {{ forms.chat }}
+                            </div>
+                            <input class="btn chat-submit" href="{% url 'administrator:chat' %}" type="submit" style="margin-left:5px; background-color:#2d2d2d; color:white; font-size:13px; height:36px;float:left;" value="확인">
+                        </form>
+                    </div>
+                    <div class="chat-fields"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block domready %}
+    <script>
+        $('.chat-submit').on('click', function(e){
+            var val = $('.chat-val');
+            e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'{% url 'administrator:chat' %}',
+                data: {
+                    'val':val.val()
+                },
+                success:function(data){
+                    val.val('');
+                    $('.chat-fields').append(
+                       '<div style="font-size:13px; color:#2d2d2d; font-weight:bold;"><img class="rounded-circle" style="width:20px; margin-right:5px;" src='+data['photo']+'>'
+                       +data['user']+'</div><div style="font-size:13px; color:#2d2d2d; margin-left:20px;">'
+                       +data['result']+'</div>'
+                    )
+                }
+            })
+        })
+    </script>
+{% endblock domready %}

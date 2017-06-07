@@ -1,0 +1,33 @@
+<div class="modal" id="buy-product-select-modal" tabindex="-1" role="dialog" style="top:30%;">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                <div class="row">
+                    <div class="col-md-12" id="buy-product-select-content" style="text-align:left; margin:10px 0 5px 0; font-size:14px; color:#2d2d2d;">
+                        구매 이후에는 환불을 할 수 없습니다. 구매를 진행하시겠습니까?
+                    </div>
+                </div>
+            </div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="buyer" value="{{ request.user.id }}">
+                <input type="hidden" name="sort" value="buy_product">
+                <input type="hidden" name="category" value="{{ product.main_category.id }}">
+                <input type="hidden" name="product_category" value="{{ product.category.id }}">
+                <input type="hidden" name="product" value="{{ product.id }}">
+                <input type="hidden" name="user" value="{{ request.user.id }}">
+                <input id="product-use-point" type="hidden" name="use_point" value="">
+                <div class="modal-footer">
+                    <a href="" class="btn btn-secondary" style="font-size:12px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫 기</a>
+                    <input class="btn" id="buy-product-confirm-btn" type="submit" value="확 인" style="cursor:pointer; border:1px solid #2d2d2d; font-size:12px; background-color:#2d2d2d; height:34px; color:white;">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

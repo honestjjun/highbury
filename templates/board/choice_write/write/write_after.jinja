@@ -1,0 +1,170 @@
+{% extends 'base.jinja' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container">
+        <div class="row" style="border-bottom:1px solid #d5d5d5;">
+            <div class="col-md-3" style="margin: 50px 0 10px 80px;">
+                <a style="font-size: 25px; font-weight: bold;">경기 후 리뷰 작성</a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:40px;">
+            <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; margin: 75px 10px 0 0;">
+                <a>매치</a>
+            </div>
+            <div class="col-md-8" style="padding:0;">
+                {# 경기 후 리뷰 페이지 일 경우 #}
+                {% include 'function/strategy/match_review.jinja' with game='after' after=match %}
+            </div>
+        </div>
+        {# 입력 폼 #}
+        <form action="{% url 'board_free:write_after' match_id=match.id %}" method="post">
+            {% csrf_token %}
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    제목
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    {{ forms.title }}
+                </div>
+            </div>
+            <div class="row" style="margin-top:30px;">
+                <div class="col-md-2" style="font-size:14px; font-weight:bold; color: #4a4a4a; text-align:right; padding-top:7px; margin-right:10px;">
+                    TAG
+                </div>
+                <div class="col-md-8" style="padding:0;">
+                    <input class="form-control" id="tags_id" type="text" name="tags" value="" style='width:600px; font-size:14px; height:36px; color:#4a4a4a;'>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 offset-md-2" style="font-size:12px; padding:3px 0 0 10px; color: grey;">
+                    복수의 tag를 입력하기 위해서는 단어 사이에 , 를 찍어 주세요
+                </div>
+            </div>
+                <div class="row justify-content-center">
+                    <div class="card" style="width:850px; margin-top: 30px; padding:20px 0 30px 35px;">
+                        <h5 class="card-title" style="margin:32px 0 40px 0;">
+                            <a style="font-size:20px; color:#4b4b4b; font-weight:bold; margin-left: 30px;">평점 남기기</a><br>
+                            <a style="font-size:13px; color: grey; margin-left:30px;">평점과 더불어 각각의 선수 리뷰를 짧게나마 작성해주셔야 입력이 완료됩니다.</a>
+                        </h5>
+                        <div class="str4-2-3-1">
+                            <div class="row">
+                                <div class="col-md-12" style="margin-bottom:15px; font-size:15px; font-weight:bold; text-align:center; color:#545454;">
+                                    경기 라인업
+                                </div>
+                            </div>
+                            <div class="row justify-content-center" style="height:680px; padding:0; margin:0;">
+                                <div class="col-md-6" style="position:absolute; left:255px; top: 170px; margin:0 0 30px 0; width:340px; height:630px;">
+                                    {# strategy-전술, player-선수, result-평점 결과를 뿌릴 건지 여부 is_value-후보 선수들이 나올 건지 여부 #}
+                                    {% include 'function/strategy/strategy.jinja' with strategy=match.set_strategy player1=match_player.0 player2=match_player.1 player3=match_player.2 player4=match_player.3 player5=match_player.4 player6=match_player.5 player7=match_player.6 player8=match_player.7 player9=match_player.8 player10=match_player.9 player11=match_player.10 player12=match_player.11 player13=match_player.12 player14=match_player.13 result=False is_value=True %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-text">
+                            <div class="col-md-12" style="margin: 0 0 15px 11px;">
+                                <a style="font-size:15px; color:#ce1000;">팀 평점 남기기</a><br>
+                            </div>
+                            <div class="col-md-12" style="font-size:14px; color:grey; margin: 0 0 3px 12px;">
+                                팀의 경기 평점을 남겨주세요
+                            </div>
+                            <div class="col-md-12" style="width: 750px; margin:5px 14px 20px 14px;">
+                                <select class="col-md-12 form-control" name="team_point" style="font-size:14px; height:36px; color:#4a4a4a;" value="">
+                                    {% for a in "0123456789" %}
+                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-12" style="font-size:14px; color:grey; margin: 0 0 5px 10px;">
+                                전체적인 리뷰 내용을 작성해주시면 됩니다.
+                            </div>
+                            <div class="col-md-12" style="width:780px; margin: 0 0 0 14px;">
+                                {{ forms.body }}
+                            </div>
+
+                            <div class="col-md-12" style="margin: 0 0 15px 11px; font-size:15px; color:#CE1000;">
+                                선발 선수 평점 남기기
+                            </div>
+
+                            {% for player in match_player %}
+                                {% if player %}
+                                    <div class="media player-calculate-bottom-margin">
+                                        <a class="media-left">
+                                            <img class="rounded player-calculate-pic" src="{{ player.name.photo.url }}">
+                                            <div class="player-calculate-pic-name">{{ player.name }}</div>
+                                            {% if forloop.counter >= 12 %}<div style="text-align:center; margin-left:30px; font-size:12px;">(교체)</div>{% endif %}
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="col-md-12" style="font-size:14px; color:grey;">선수의 경기 평점을 남겨주세요</div>
+                                            <select class="col-md-12 form-control" name="player{{ forloop.counter }}_point" style="margin:5px 0 5px 16px; width:612px; font-size:14px; height:36px; color:#4a4a4a;" value="">
+                                                {% for a in "0123456789" %}
+                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <textarea class="col-md-12 form-control" name="player{{ forloop.counter }}_review" placeholder="간단하게라도 선수 평을 남겨 주셔야 합니다." style="margin-left:16px; width:612px; font-size:14px; height:130px; color:#4a4a4a;" value=""></textarea>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="media player-calculate-bottom-margin">
+                                        <a class="media-left">
+                                            <img class="rounded player-calculate-pic" src="http://127.0.0.1:8000/media/default/default.png"><br>
+                                            <div class="player-calculate-pic-name" style="font-weight:normal;">교체 없음</div>
+                                        </a>
+                                        <div class="media-body">
+                                            <div class="col-md-12 player-calculate-title" style="">선수의 경기 평점을 남겨주세요</div>
+                                            <input class="form-control" type="text" style="height:100px; width:612px; margin:5px 0 0 16px;" readonly>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-2" style="margin:20px 0 120px 0;">
+                        <a class="btn summer_note" id="write-after-btn" type="submit" style="cursor:pointer; padding-top:12px; font-weight:bold; width:90px; height:42px; border:1px solid #2d2d2d; color:white; font-size:13px; background-color:#2d2d2d;">등 록</a>
+                        {# write free board modal #}
+                        <div class="modal" id="write-after-modal" tabindex="-1" role="dialog" style="top:30%;">
+                            <div class="modal-dialog" role="document" style="width:400px;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" style="padding-top:10px; padding-left:15px;">
+                                        <div class="row">
+                                            <div class="col-md-12" style="text-align:left; margin-bottom:5px; font-size:14px; color:#2d2d2d;">
+                                                1. 각 경기 당 경기 후 리뷰는 한번씩만 작성 하실수 있습니다.<br>
+                                                2. 경기 후 리뷰는 등록 후에 팀과 선수의 평점를 수정할 수<br>
+                                                없습니다.<br>
+                                                현재 게시물을 등록하시겠습니까?
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                                        <input type="submit" href="" class="btn btn-secondary" style="cursor:pointer; border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;" value="등 록">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+{% endblock %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            $('#write-after-btn').on('click', function(e){
+                e.preventDefault();
+                $('#write-after-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            })
+        })
+    </script>
+
+{% endblock domready %}

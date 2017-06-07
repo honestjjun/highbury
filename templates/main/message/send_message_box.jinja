@@ -1,0 +1,89 @@
+{% extends 'main/mypage/side_menu/mypage_side_menu.jinja' %}
+{% block right_side %}
+    <div class="row send-message-box">
+        <div class="col-12">
+            <div>보낸 쪽지함</div>
+            <div>(총 <a>{{ message_count }}</a>개의 메세지 중에 <a>{{ confirm_count }}</a>개의 미확인 메세지가 있습니다.)</div>
+        </div>
+    </div>
+    <table class="table send-message-table" style="margin-bottom:0;">
+        <tr>
+            <th>번호</th>
+            <th>받은 사람</th>
+            <th>메세지</th>
+            <th>보낸 시간</th>
+            <th>수신 확인</th>
+            <th>삭제</th>
+        </tr>
+        {% if paging.0 %}
+            {% for message in paging.0 %}
+                <tr {% if forloop.last %}style="border-bottom:1px solid #eeeeee;"{% endif %}>
+                    <td>{{ message.send_num }}</td>
+                    <td>{{ message.take_user }}</td>
+                    <td><a href="{% url 'message:detail' message_id=message.id value='send' %}">{{ message.message|truncatechars:40 }}</a></td>
+                    <td>{{ message.created|date:'y.m.d [H:i]' }}</td>
+                    {% if message.is_confirm == True %}
+                        <td>확인</td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}
+                    <td>
+                        <div class="reporter-writer-table">
+                            <a class="btn send-delete-message-btn" href="" style="font-size:12px; color:black; padding:5px 8px 5px 8px; border:1px solid #a3a3a3;">삭제</a>
+                            {# delete message modal #}
+                            <div class="modal" id="send-delete-message-modal" tabindex="-1" role="dialog" style="top:30%;">
+                                <div class="modal-dialog" role="document" style="width:400px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div style="font-size:15px; color:#2d2d2d; font-weight:bold;">알림창</div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" style="padding-top:5px; padding-left:15px;">
+                                            <div class="row">
+                                                <div class="col-md-12" style="text-align:left; margin-bottom:5px; font-size:14px; color:#2d2d2d;">
+                                                    현재 메세지를 정말 삭제 하시겠습니까?
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="" class="btn btn-secondary" style="font-size:12px; width:80px; color:#2d2d2d; height:34px;" data-dismiss="modal">닫기</a>
+                                            <a href="{% url 'message:delete_message' id=message.id which='send' %}" class="btn btn-secondary" style="border:1px solid #2d2d2d; background-color:#2d2d2d; color:white; font-size:12px; width:80px; height:34px;">삭제</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        {% else %}
+            <tr style="border-bottom:1px solid #eeeeee;">
+                <td colspan="6" style="font-size:13px; font-weight:bold; color:grey;">보낸 메세지가 없습니다.</td>
+            </tr>
+        {% endif %}
+    </table>
+    <div class="row" style="text-align:right; padding-top:5px;  margin:0 0 20px 0;">
+        <div class="col-md-12" style="font-size:12px; color:grey;">
+            메세지는 6개월 동안만 저장됩니다.
+        </div>
+    </div>
+    <div style="margin: 0 0 150px 0;">
+        {% include 'function/pagination.jinja' with comments=paging.0 prev=paging.1 nxt=paging.2 prevPage=paging.3 nxtPage=paging.4 blockRange=paging.5 %}
+    </div>
+{% endblock right_side %}
+{% block domready %}
+    <script>
+        $('.send-delete-message-btn').on('click', function(e){
+            e.preventDefault();
+            var $parent_reporter = $(this).closest('.reporter-writer-table');
+            $parent_reporter.find('#send-delete-message-modal').modal({
+                show:true,
+                backdrop: 'static',
+                keyboard:false
+            });
+        })
+    </script>
+{% endblock domready %}

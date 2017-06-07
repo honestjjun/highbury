@@ -1,0 +1,54 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center register-banner">
+            <div class="col-md-10 banner-graphic">
+                <div class="row">
+                    <div class="col-md-3 a">
+                        <div>약관 동의</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 b">
+                        <div>이메일<br>확인</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 c">
+                        <div>회원 정보 입력</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 d">
+                        <div>가입 완료</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-9">
+                <div style="position:relative; top:0; left:0; font-size:25px; margin-bottom:5px; font-weight:bold; color:#404040;">
+                    Arsenal 회원 약관 동의
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-9 card" style="position:relative; top:0; left:0; height:500px; margin-bottom:10px;">
+                <div style="font-size:14px; color:#3b3b3b; padding:10px 10px 10px 10px">어쩌고 저쩌고</div>
+            </div>
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row justify-content-center">
+                <div class="col-md-9" style="position:absolute; top:775px; left:678px; font-size:13px; color:#3b3b3b;">
+                    <input id="radio_1" type="radio" value="1" name="terms_agree">
+                    <label for="radio_1" style="margin:0 10px 0 5px;">예 동의합니다.</label>
+                    <input id="radio_2" type="radio" value="2" name="terms_agree">
+                    <label for="radio_2" style="margin-left:5px;">아니오 동의 할수 없습니다.</label>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-2" style="padding-left:20px; margin:50px 0 100px 0;">
+                    <input class="btn" type="submit" style="padding-top:5px; width:140px; height:45px; background-color:#2d2d2d; color:white; font-size:14px; font-weight:bold;" value="다음 단계">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

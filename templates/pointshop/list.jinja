@@ -1,0 +1,90 @@
+{% extends 'pointshop/side_menu/pointshop_side_menu.jinja' %}
+{% load custom_tags %}
+{% block left_side %}
+    <style>
+        #next-page-loading:hover {
+            background-color: #f3f3f3;
+        }
+        .pointshop-list-menu .btn {
+            font-size:11px;
+        }
+        .pointshop-list-menu .active {
+            background-color: #2d2d2d;
+            color:white;
+            border:1px solid #2d2d2d;
+        }
+        .pointshop-list-submenu .active {
+            font-weight:bold; color:#ba1626;
+        }
+    </style>
+    <div class="row" style="margin-top:20px; margin-bottom:5px;">
+        <div class="col-lg-4 col-md-12" style="font-size:30px; font-weight:bold; padding:0 0 0 40px;">
+            포인트샵
+        </div>
+        <!-- 만일 large size 이상 일 경우 float:right 정렬 현재 부분 보임 -->
+        <div class="col-lg-8 pointshop-list-menu hidden-md-down">
+            {% for category in categories %}
+                <a class="btn btn-secondary {% if select_menu.id == category.id %}active{% endif %}" href="{% url 'pointshop:category_list' category_id=category.id %}">{{ category.name }}</a>
+            {% endfor %}
+            <a class="btn btn-secondary" href="{% url "pointshop:list" %}">전 체</a>
+        </div>
+        <!-- 만일 medium size 이하 일 경우 현재 부분 보임 -->
+        <div class="col-md-12 pointshop-list-menu hidden-lg-up">
+            <a class="btn btn-secondary" href="{% url "pointshop:list" %}">전 체</a>
+            {% for category in categories reversed %}
+                <a class="btn btn-secondary {% if select_menu.id == category.id %}active{% endif %}" href="{% url 'pointshop:category_list' category_id=category.id %}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- 소메뉴 클릭 시 현재 부분 보임 -->
+    {% if select_menu %}
+        <div class="row pointshop-list-submenu" style="margin-bottom:5px;">
+            <div class="col-md-12 card">
+                <div class="row" style="padding:8px 0 8px 0;">
+                    {% for sub_category in select_menu.sub_category.all %}
+                        <div class="col-xl-2 col-lg-3 col-sm-6" style="font-size:13px; text-align:center;">
+                            <a {% if request.resolver_match.url_name == 'category_list' and request.GET.sub_category == sub_category.id|slugify %}class="active"{% endif %} href="{% url 'pointshop:category_list' category_id=select_menu.id %}?sub_category={{ sub_category.id }}">{{ sub_category.name }}</a>
+                        </div>
+                    {% empty %}
+                        <div class="col-lg-12" style="font-size:13px; text-align: center;">
+                            서브 카테고리가 존재하지 않습니다.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div id="product-list">
+        {% include 'pointshop/list_ajax.jinja' %}
+    </div>
+    {% if end_page != 1 %}
+        <div class="row">
+            <div class="col-md-10 btn" id="next-page-loading" data-value="{{ end_page }}" style="margin:0 auto; font-size:14px; font-weight:bold; color:grey; height:50px; line-height:46px; border-radius:5px; padding:0; vertical-align:middle; border:1px solid #ddd; text-align:center; cursor:pointer;">다음 페이지 로딩</div>
+        </div>
+    {% endif %}
+{% endblock left_side %}
+{% block domready %}
+    <script>
+        var page = 1;
+        var empty_page = false;
+        $('#next-page-loading').on('click', function(e){
+            e.preventDefault();
+            var end_page = $(this).attr('data-value');
+            if (empty_page == true) {
+                alert('hi')
+            } else {
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '') {
+                        empty_page = true;
+                    } else {
+                        if (end_page == page) {
+                            $('#next-page-loading').css('display', 'none');
+                        }
+                        $('#product-list').append(data);
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock domready %}

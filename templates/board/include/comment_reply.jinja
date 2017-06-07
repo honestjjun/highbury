@@ -1,0 +1,12 @@
+<div class='showHideForm' style="display: none;">
+    <div class="row">
+        <div class="col-md-12" style="padding:5px 20px 10px 30px;">
+            <form action="{% url 'board_free:comment' id=post.id slug=post.slug comment_id=comment.id %}#results" method="post">
+                {% csrf_token %}
+                <textarea rows="5" name="content" class="form-control" style="font-size:14px; color:#555555;"></textarea>
+                <input type="hidden" name="comment" value="{{ comment.id }}">
+                <input type="submit" class="btn btn-danger" value="등록" style="float:right; margin:5px 0 5px 0; border:1px solid #ba1626; background-color:#BA1626; font-size:14px;">
+            </form>
+        </div>
+    </div>
+</div>

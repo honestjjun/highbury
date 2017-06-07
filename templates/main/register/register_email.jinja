@@ -1,0 +1,99 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center input-email">
+            <div class="col-md-10 banner-graphic">
+                <div class="row">
+                    <div class="col-md-3 a">
+                        <div>약관 동의</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 b">
+                        <div>이메일<br>확인</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 c">
+                        <div>회원 정보 입력</div>
+                        <div></div>
+                    </div>
+                    <div class="col-md-3 d">
+                        <div>가입 완료</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center email-title">
+            <div class="col-md-9 card" style="height:190px; margin-bottom:200px;">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-md-3">
+                            <label for="email-confirm" style="font-weight:bold; padding-top:8px; float:right; color:#565656;">E-mail</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-control" type="text" id="email-confirm" name="email-confirm" style="font-size:13px; color:#565656; height:36px;">
+                        </div>
+                        <div class="col-md-3">
+                            <a href="" class="btn email-confirm-btn" style="background-color:white; color:#606060; border:1px solid #d6d6d6; padding-top:10px; font-size:12px; height:36px; font-weight:bold;">중복 확인</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3" id="email-confirm-message" style="font-size:12px; color:grey;">
+                            중복 확인을 해주시기 바랍니다.
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6" style="margin:10px 0 0 160px;">
+                            <a class="btn btn-secondary" href="{% url 'account:register_terms' %}" style="font-size:13px;">뒤로 가기</a>
+                            <input class="btn" id="send-email-btn" type="button" value="인증 메일 보내기" data-value="false" onclick="gn(this)" style="width:150px; font-size:13px; background-color:#2d2d2d; color:white;">
+                        </div>
+                    </div>
+                </form>
+                <div style="font-size:14px; color:#3b3b3b; padding:10px 10px 10px 10px"></div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block domready %}
+    <script>
+        function gn(value){
+           var data = value.getAttribute('data-value');
+           var text = document.getElementById('email-confirm-message');
+           if (data == 'false'){
+               text.innerHTML = '중복 확인을 해주시기 바랍니다.';
+               text.style.cssText = 'color:#1f2edc; font-size:12px;'
+           }
+        }
+        $(document).ready(function(){
+            $('.email-confirm-btn').on('click', function(e){
+                e.preventDefault();
+                var email_confirm = document.getElementById('email-confirm-message');
+                var send_email = document.getElementById('send-email-btn');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'account:register_email_check' value='register' %}',
+                    data:{
+                        'id':$('#email-confirm').val()
+                    },
+                    success:function(data){
+                        if (data['result'] == 'none'){
+                            email_confirm.innerHTML = '입력하여 주시기 바랍니다.';
+                            email_confirm.style.cssText = 'font-size:12px; color:#1F2EDC;';
+                        }else if (data['result'] == 'false'){
+                            email_confirm.innerHTML = '중복된 이메일 입니다.';
+                            email_confirm.style.cssText = 'font-size:12px; color:#1F2EDC;';
+                        }else if (data['result'] == 'true'){
+                            email_confirm.innerHTML = '사용할수 있는 이메일 입니다.';
+                            email_confirm.style.cssText = 'font-size:12px; color:#ba1626;';
+                            send_email.setAttribute('data-value', 'true');
+                            send_email.type= 'submit'
+                        }else if (data['result'] == 'no_email'){
+                            email_confirm.innerHTML = '이메일 형식이 아닙니다.';
+                            email_confirm.style.cssText = 'font-size:12px; color:#1F2EDC;';
+                        }
+                    }
+                })
+            });
+        })
+    </script>
+{% endblock domready %}

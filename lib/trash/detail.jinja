@@ -1,0 +1,235 @@
+{% extends 'base/../../templates/main/side_menu/mypage.jinja' %}
+{% block right_side %}
+    <div class="row message-detail">
+        <div class="col-12">
+            <a id="message-delete-btn" data-value="{{ value }}" data-send="{% url 'message:delete_message' id=message_detail.id which='send' %}" data-take="{% url 'message:delete_message' id=message_detail.id which='take' %}" class="btn btn-secondary" style="cursor:pointer;">삭제</a>
+            {% if value == 'take' %}
+                <a href="" id="reply-message-btn" class="btn btn-secondary">답장</a>
+                {% if message_detail.send_user != request.user %}
+                    <a href="" id="charge-message-btn" data-id="{{ message_detail.id }}" data-value="{{ message_detail.message|truncatechars:73 }}" class="btn btn-secondary">신고</a>
+                {% endif %}
+            {% endif %}
+            <a href="{% if value == 'send' %}{% url 'message:send_message_box' %}{% else %}{% url 'message:take_message_box' %}{% endif %}" class="btn btn-secondary">목록</a>
+        </div>
+    </div>
+    <hr>
+    {% if value == 'send' %}
+        <div class="row message-take">
+            <div class="col-12">
+                <a>받은 사람</a>{{ message_detail.take_user }}<br>
+                <a>보낸 날짜</a>{{ message_detail.created|date:'y.m.d H:i' }}
+            </div>
+        </div>
+    {% else %}
+        <div class="row message-send">
+            <div class="col-12">
+                <div class="dropdown">
+                    <a id="user">보낸 사람</a><a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" style="cursor:pointer;">{{ message_detail.send_user }}</a>
+                    {% include 'function/user_profile_modal/menu_modal.jinja' with user=message_detail.send_user is_value='board_list' %}
+                </div>
+                <a id="user">받은 시간</a><a id="message-time">{{ message_detail.created|date:'y.m.d H:i' }}</a>
+            </div>
+        </div>
+    {% endif %}
+    <hr>
+    <div class="row message-body">
+        <div class="col-12">
+            {{ message_detail.message|linebreaks }}
+        </div>
+    </div>
+    <hr>
+    {% include 'function/user_profile_modal/message_report_modal.jinja' %}
+    {% include 'function/message_modal/../../templates/function/user_profile_modal/charge_modal.jinja' %}
+    {% include 'function/message_modal/reply_modal.jinja' %}
+    {% include 'function/message_modal/alert_message.jinja' %}
+{% endblock right_side %}
+{% block domready %}
+    <script>
+        $(document).ready(function(){
+            var content = $('#write-message-content');
+            {# 쪽지 보내기 modal 창 #}
+            $('.profile-message-btn').on('click', function(e){
+                e.preventDefault();
+                var value = $(this).attr('data-value');
+                $('#message-take-user').attr('value', value);
+                $('#profile-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+            $('#message-submit').on('click', function(e){
+                e.preventDefault();
+                var message_content = $('#take-user-message');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data: {
+                        'send_user':$('#message-send-user').val(),
+                        'take_user': $('#message-take-user').val(),
+                        'message': message_content.val(),
+                        'sort_value': 'message'
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            message_content.val('');
+                            if (data['status'] == 'message_success') {
+                                content.html('메세지가 정상적으로 보내지셨습니다..');
+                            } else if (data['status'] == 'message_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'message_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            }
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('#report-submit').on('click', function(e){
+                e.preventDefault();
+                var report_content = $('#report-content');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data: {
+                        'reporter':$('#report-reporter').val(),
+                        'report_reason': $('#report-report_reason').val(),
+                        'sort': $('#report-sort').val(),
+                        'sort_value': $('#report-sort_value').val(),
+                        'writer': $('#report-writer').val(),
+                        'content': report_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            report_content.val('');
+                            if (data['status'] == 'report_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'report_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'report_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'report_already') {
+                                content.html('해당 유저에 대한 신고가 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'report_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'report_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                });
+            });
+            $('#message-delete-btn').on('click', function(e){
+                e.preventDefault();
+                $('#select-message-content').html('현재 메세지를 정말 삭제하시겠습니까?');
+                var send = $(this).attr('data-send');
+                var take = $(this).attr('data-take');
+                var confirm_btn = $('#select-message-confirm-btn');
+
+                if ($(this).attr('data-value') == 'send'){
+                    confirm_btn.attr('href', send)
+                } else {
+                    confirm_btn.attr('href', take)
+                }
+                $('#select-message').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            $('#reply-message-btn').on('click', function(e){
+                e.preventDefault();
+                $('#reply-message-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                })
+            });
+
+            var charge_sort = $('#all-charge-sort');
+            var charge_to = $('#all-charge-to');
+            var charge_modal_title = $('#charge-modal-title');
+
+            {# 유저 프로필 신고 창 #}
+            $('.profile-charge-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'etc');
+                charge_to.attr('value', $(this).attr('data-id'));
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# 메세지 신고 창 #}
+            $('#charge-message-btn').on('click', function(e){
+                e.preventDefault();
+                charge_sort.attr('value', 'message');
+                charge_to.attr('value', $(this).attr('data-id'));
+                $('#charge-modal').modal({
+                    show:true,
+                    backdrop:'static',
+                    keyboard:false
+                });
+                charge_modal_title.html($(this).attr('data-value'));
+            });
+
+            {# 신고를 하게 되면 charge_ajax로 보내버림 #}
+            $('#all-charge-submit').on('click', function(e){
+                e.preventDefault();
+                var charge_content = $('#charge-content');
+                var charge_reason = $('#all-charge-reason');
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'administrator:charge_ajax' %}',
+                    data:{
+                        'sort': charge_sort.val(),
+                        'charge_reason': charge_reason.val(),
+                        'charge_to': charge_to.val(),
+                        'content': charge_content.val()
+                    },
+                    success:function(data){
+                        if (data['status'] != 'none') {
+                            charge_content.val('');
+                            charge_reason.val('0');
+                            if (data['status'] == 'charge_success') {
+                                content.html('정상적으로 신고가 완료 되셨습니다.');
+                            } else if (data['status'] == 'charge_short') {
+                                content.html('10자 이상 글자를 작성하셔야 합니다.');
+                            } else if (data['status'] == 'charge_empty') {
+                                content.html('내용이 입력이 되지 않으셨습니다.');
+                            } else if (data['status'] == 'charge_already') {
+                                content.html('이전에 신고하신 내용이 아직 처리 안된 상태입니다.')
+                            } else if (data['status'] == 'charge_already_done') {
+                                content.html('이미 해당 게시물의 신고 처리가 완료된 상태입니다.')
+                            } else if (data['status'] == 'charge_red') {
+                                content.html('해당 유저는 현재 레드 카드로 탈퇴된 상태입니다.')
+                            } else if (data['status'] == 'charge_same') {
+                                content.html('본인을 신고 할 수는 없습니다. ')
+                            }
+                            console.log(data['status']);
+                            $('#write-message').modal({
+                                show:true,
+                                backdrop:'static',
+                                keyboard:false
+                            });
+                        }
+                    }
+                })
+            });
+        })
+    </script>
+{% endblock %}

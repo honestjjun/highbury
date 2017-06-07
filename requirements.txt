@@ -1,0 +1,13 @@
+django<1.12
+Pillow
+
+django-phonenumber-field
+django-summernote
+django-widget-tweaks
+python-dateutil
+boto3
+django-storages
+psycopg2
+django-debug-toolbar
+jinja2
+django-taggit

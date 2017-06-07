@@ -1,0 +1,7 @@
+{% if user.is_yellow %}
+    {% if user.is_red %}
+        <div style="float:left; width:12px; height:16px; margin-left:3px; background-color:red; border:1px solid #e20000;"></div>
+    {% else %}
+        <div style="float:left; width:12px; height:16px; margin-left:3px; background-color:yellow; border:1px solid #d8d800;"></div>
+    {% endif %}
+{% endif %}
