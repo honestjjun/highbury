@@ -91,7 +91,7 @@ class VoteAnswer(models.Model):
             try:
                 VoteAnswer.objects.get(id=self.id)
             except VoteAnswer.DoesNotExist:
-                self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
+                #self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
                 super(VoteAnswer, self).save(*args, **kwargs)
     
                 image = Image.open(self.pic_answer.name)
