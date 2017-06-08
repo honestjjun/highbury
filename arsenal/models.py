@@ -94,9 +94,9 @@ class VoteAnswer(models.Model):
                 self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
                 super(VoteAnswer, self).save(*args, **kwargs)
     
-                image = Image.open(self.pic_answer.path)
+                image = Image.open(self.pic_answer.name)
                 image = image.resize((100,100), Image.ANTIALIAS)
-                image.save(self.pic_answer.path, format='JPEG', quality=70)
+                image.save(self.pic_answer.name, format='JPEG', quality=70)
                 super(VoteAnswer, self).save(*args, **kwargs)
             else:
                 super(VoteAnswer, self).save(*args, **kwargs)
