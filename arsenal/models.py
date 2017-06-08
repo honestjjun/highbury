@@ -90,7 +90,7 @@ class VoteAnswer(models.Model):
         elif self.is_transform == 'picture':
             try:
                 VoteAnswer.objects.get(id=self.id)
-            except VoteAnswer.DoesNowExist:
+            except VoteAnswer.DoesNotExist:
                 self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
                 super(VoteAnswer, self).save(*args, **kwargs)
     
