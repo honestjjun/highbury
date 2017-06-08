@@ -43,7 +43,7 @@ BACKNUMBER_CHOICES = [(i,i) for i in range(1,100)]
 # 라운드 종류
 ROUND_CHOICES = (
     ('1', '1 Round'), ('2', '2 Round'), ('3', '3 Round'), ('4', '4 Round'), ('5', '5 Round'),
-    ('6', '6 Round'), ('7', '7 Round'), ('8', '8 Round'), ('9', '9 Round'), ('1', '10 Round'),
+    ('6', '6 Round'), ('7', '7 Round'), ('8', '8 Round'), ('9', '9 Round'), ('10', '10 Round'),
     ('11', '11 Round'), ('12', '12 Round'), ('13', '13 Round'), ('14', '14 Round'), ('15', '15 Round'),
     ('16', '16 Round'), ('17', '17 Round'), ('18', '18 Round'), ('19', '19 Round'), ('20', '20 Round'),
     ('21', '21 Round'), ('22', '22 Round'), ('23', '23 Round'), ('24', '24 Round'), ('25', '25 Round'),
