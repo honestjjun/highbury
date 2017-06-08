@@ -72,9 +72,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'highbury.urls'
 
-TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
-)
 
 TEMPLATES = [
     {
