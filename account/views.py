@@ -258,7 +258,7 @@ def register(request, email_barcode):
                                 forms2 = MyUserProfileForm(instance=user, files=request.FILES)
                                 if forms2.is_valid():
                                     user_photo = forms2.save(commit=False)
-                                    user_photo.update()
+                                    user_photo.pre_save()
                             point=UserPoint.objects.create(user=user)
                             return HttpResponseRedirect(reverse('account:register_done'))
 

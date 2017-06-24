@@ -15,7 +15,7 @@ class VoteAnswerTable(admin.StackedInline):
 
 @admin.register(VoteQuestion)
 class VoteQuestionAdmin(admin.ModelAdmin):
-    list_display = ('question', 'choice_num', 'created', 'start_vote', 'end_vote', 'is_sort', 'is_active')
+    list_display = ('id', 'question', 'choice_num', 'created', 'start_vote', 'end_vote', 'is_sort', 'is_active')
     list_filter = ('question',)
     search_fields = ('question',)
 
@@ -24,7 +24,7 @@ class VoteQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(VoteAnswer)
 class VoteAnswerAdmin(admin.ModelAdmin):
-    list_display = ('question', 'answer', 'vote', 'is_transform')
+    list_display = ('id', 'question', 'answer', 'vote', 'is_transform')
 
 
 @admin.register(VoteUser)

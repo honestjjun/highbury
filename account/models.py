@@ -1,8 +1,10 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.utils import timezone
 
+from io import BytesIO
 from random import randint
 from .manager import MyUserManager
 from PIL import Image
@@ -60,39 +62,32 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def is_staff(self):
         return self.is_superuser
 
-    def update(self, size = (160,160)):
-        user_email_split = tSplit(self.email, "@.")
-        user_email_join = '_'.join(user_email_split)
-        self.photo.name = '{}.jpg'.format(user_email_join)
+    def pre_save(self, size = (160,160), update=None):
+        # 정보에 사진이 있을 경우 리사이징 시켜 버림
+        if self.photo:
+            im = Image.open(self.photo).convert('RGB')
+
+            output = BytesIO()
+
+            im = im.resize(size)
+
+            im.save(output, format='JPEG', quality=100)
+            output.seek(0)
+
+            # 파일명을 유저 이메일명으로 수정
+            stack = [self.email]
+            for char in "@.":
+                pieces = []
+                for subStr in stack:
+                    pieces.extend(subStr.split(char))
+                stack = pieces
+            user_email_join = '_'.join(stack)
+
+            # change the imagefield value to be the newley modifed image value
+            self.photo = InMemoryUploadedFile(output, 'ImageField', "{}.jpg".format(user_email_join), 'image/jpeg', sys.getsizeof(output), None)
+            if update:
+                self.save(update_fields=['photo'])
         super(MyUser, self).save()
-        pw = self.photo.width
-        ph = self.photo.height
-        nw = size[0]
-        nh = size[1]
-
-        if (pw, ph) != (nw, nh):
-            filename = str(self.photo.path)
-            image = Image.open(filename)
-            pr = float(pw) / float(ph)
-            nr = float(nw) / float(nh)
-
-            if pr > nr:
-                # photo aspect is wider than destination ratio
-                tw = int(round(nh * pr))
-                image = image.resize((tw, nh), Image.ANTIALIAS)
-                l = int(round((tw - nw)/2.0))
-                image = image.crop((l, 0, l+nw, nh))
-            elif pr < nr:
-                # photo aspect is taller than destination ratio
-                th = int(round(nw/pr))
-                image = image.resize((nw, th), Image.ANTIALIAS)
-                t = int(round((th - nh)/2.0))
-                image = image.crop((0, t, nw, t+nh))
-            else:
-                # photo aspect matches the destination ratio
-                image = image.resize(size, Image.ANTIALIAS)
-
-            image.save(filename)
 
 
 class RegistEmail(models.Model):

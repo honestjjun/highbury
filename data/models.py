@@ -1,9 +1,13 @@
 from __future__ import unicode_literals
 
+import sys
 from PIL import Image
 from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.utils import timezone
+
+from io import BytesIO
 
 
 # 리그 종류
@@ -134,11 +138,21 @@ class Player(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        # 정보에 사진이 있을 경우 리사이징 시켜 버림
+        if self.photo:
+            im = Image.open(self.photo).convert('RGB')
+
+            output = BytesIO()
+
+            im = im.resize((100, 100))
+
+            im.save(output, format='JPEG', quality=100)
+            output.seek(0)
+
+            # change the imagefield value to be the newley modifed image value
+            self.photo = InMemoryUploadedFile(output, 'ImageField', "{}.jpg".format(self.name), 'image/jpeg',
+                                              sys.getsizeof(output), None)
         super(Player, self).save(*args, **kwargs)
-        if self.photo.width > 100:
-            image = Image.open(self.photo.path)
-            image = image.resize((100, 100), Image.ANTIALIAS)
-            image.save(self.photo.path, format='JPEG', quality=70)
 
 
 # 선수 manager

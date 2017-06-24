@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
+<body>
 <style>
     .navbar-light .navbar-toggler-icon {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
@@ -61,9 +62,9 @@
                 <!-- 로그아웃 하였을 때 -->
                 {% else %}
                     <div class="col-lg-12">
-                        <div class="social-icon" style="float:right; color:#ba1626; padding-right:32px;">
-                            <a href="{% url 'account:register_terms' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141;">회원 가입</a>
-                            <a href="{% url 'account:login' %}" style="padding:4px 10px 4px 10px; float:left; font-size:11px; border-left:1px solid #414141; border-right:1px solid #414141;">로그인</a>
+                        <div class="social-icon" style="float:right; padding-right:32px;">
+                            <a href="{% url 'account:register_terms' %}" style="padding:4px 10px 4px 10px; color:#ba1626; float:left; font-size:11px; border-left:1px solid #414141;">회원 가입</a>
+                            <a href="{% url 'account:login' %}" style="padding:4px 10px 4px 10px; float:left; color:#ba1626; font-size:11px; border-left:1px solid #414141; border-right:1px solid #414141;">로그인</a>
                         </div>
                     </div>
                 {% endif %}

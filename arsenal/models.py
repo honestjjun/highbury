@@ -91,14 +91,16 @@ class VoteAnswer(models.Model):
             try:
                 VoteAnswer.objects.get(id=self.id)
             except VoteAnswer.DoesNotExist:
-                #self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
+                self.pic_answer.name = '{}/{}_{}.jpg'.format(timezone.now().strftime('%Y-%m-%d'), self.question, self.answer)
+                print(self.pic_answer.name)
                 super(VoteAnswer, self).save(*args, **kwargs)
-    
-                image = Image.open(self.pic_answer.name)
+                print('https://s3.ap-northeast-2.amazonaws.com/highburys3/media/'+str(self.pic_answer.name))
+                image = Image.open('https://s3.ap-northeast-2.amazonaws.com/highburys3/media/'+str(self.pic_answer.name))
                 image = image.resize((100,100), Image.ANTIALIAS)
                 image.save(self.pic_answer.name, format='JPEG', quality=70)
                 super(VoteAnswer, self).save(*args, **kwargs)
             else:
+                print('hi')
                 super(VoteAnswer, self).save(*args, **kwargs)
 
 
